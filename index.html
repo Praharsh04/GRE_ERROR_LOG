@@ -178,24 +178,55 @@
   .btn-primary:hover { background: linear-gradient(135deg, var(--peach-light), var(--peach)); color: white; box-shadow: 0 3px 12px rgba(232,132,106,0.4); }
   
   .theme-toggle {
-    width: 36px;
-    height: 36px;
+    width: 62px;
+    height: 32px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 6px;
+    cursor: pointer;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+  }
+  .theme-toggle:hover {
+    border-color: var(--peach-light);
+    background: var(--bg2);
+  }
+  .theme-toggle-thumb {
+    position: absolute;
+    left: 4px;
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
+    background: white;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s;
+    z-index: 2;
+  }
+  [data-theme="dark"] .theme-toggle-thumb {
+    transform: translateX(30px);
+    background: var(--peach);
+  }
+  .theme-toggle-icon {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 18px;
-    cursor: pointer;
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    color: var(--text-mid);
-    transition: all 0.2s;
+    width: 24px;
+    height: 24px;
+    z-index: 1;
+    color: var(--text-faint);
+    transition: color 0.3s;
   }
-  .theme-toggle:hover {
-    background: var(--peach-faint);
-    color: var(--peach);
-    border-color: var(--peach-light);
+  .theme-toggle-icon svg {
+    width: 14px;
+    height: 14px;
   }
+  [data-theme="light"] .theme-toggle-icon.sun { color: var(--amber); }
+  [data-theme="dark"] .theme-toggle-icon.moon { color: white; }
 
   /* ── FILTER BAR ── */
   .filter-bar {
@@ -727,7 +758,15 @@
     <div class="stat-chip sage">Reviewed <strong id="stat-reviewed">0</strong></div>
     <div class="stat-chip peach">Pending <strong id="stat-pending">0</strong></div>
   </div>
-  <div class="theme-toggle" id="theme-toggle" title="Toggle dark mode">🌙</div>
+  <div class="theme-toggle" id="theme-toggle" title="Toggle theme">
+    <div class="theme-toggle-thumb"></div>
+    <div class="theme-toggle-icon sun">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+    </div>
+    <div class="theme-toggle-icon moon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+    </div>
+  </div>
   <button class="btn btn-primary" onclick="exportCSV()" style="margin-left:4px;">↓ Export CSV</button>
 </header>
 
@@ -1226,8 +1265,7 @@ function toggleTheme() {
   updateThemeToggle(next);
 }
 function updateThemeToggle(theme) {
-  const el = document.getElementById('theme-toggle');
-  el.textContent = theme === 'dark' ? '☀️' : '🌙';
+  // Visuals handled by CSS [data-theme] selectors
 }
 document.getElementById('theme-toggle').onclick = toggleTheme;
 
