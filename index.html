@@ -187,6 +187,24 @@
   .filter-select:focus { border-color: var(--peach-light); box-shadow: 0 0 0 3px rgba(232,132,106,0.12); }
   .filter-select option { background: white; }
 
+  .btn-toggle-star {
+    font-size: 11px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: var(--font-mono);
+  }
+  .btn-toggle-star.active {
+    background: var(--amber-faint);
+    border-color: var(--amber);
+    color: var(--amber);
+    box-shadow: var(--shadow-sm);
+  }
+
   .row-count {
     margin-left: auto;
     font-size: 11px;
@@ -218,6 +236,7 @@
     overflow: hidden;
   }
 
+  col.c-star     { width: 34px; }
   col.c-num      { width: 42px; }
   col.c-topic    { width: 140px; }
   col.c-subtopic { width: 140px; }
@@ -255,6 +274,8 @@
   }
   tbody tr:nth-child(even) { background: var(--surface2); }
   tbody tr:hover { background: var(--peach-faint); }
+  tbody tr.starred-row { background: var(--amber-faint) !important; }
+  tbody tr.starred-row:hover { background: #fdf0cc !important; }
   tbody tr:last-child td { border-bottom: none; }
   tbody tr:last-child td:first-child { border-radius: 0 0 0 var(--radius-lg); }
   tbody tr:last-child td:last-child  { border-radius: 0 0 var(--radius-lg) 0; }
@@ -274,6 +295,17 @@
     font-family: var(--font-mono);
     user-select: none;
   }
+
+  .star-cell {
+    text-align: center;
+    cursor: pointer;
+    font-size: 16px;
+    user-select: none;
+    transition: transform 0.1s;
+  }
+  .star-cell:active { transform: scale(1.2); }
+  .star-cell.starred { color: var(--amber); }
+  .star-cell.unstarred { color: var(--text-faint); }
 
   /* Editable textarea cell */
   .cell-text {
@@ -668,6 +700,7 @@
     <option value="Formula Error">Formula Error</option>
     <option value="Other">Other</option>
   </select>
+  <button class="btn-toggle-star" id="filter-starred" onclick="toggleStarredFilter()">☆ Show Starred Only</button>
   <button class="btn btn-ghost" onclick="resetFilters()" style="font-size:11px;">✕ Reset</button>
   <span class="row-count" id="row-count">0 rows</span>
 </div>
@@ -676,6 +709,7 @@
 <div class="table-wrapper">
   <table>
     <colgroup>
+      <col class="c-star">
       <col class="c-num">
       <col class="c-topic">
       <col class="c-subtopic">
@@ -690,6 +724,7 @@
     </colgroup>
     <thead>
       <tr>
+        <th></th>
         <th>#</th>
         <th class="col-accent">Topic</th>
         <th>Subtopic</th>
@@ -882,6 +917,7 @@ const ETYPE_CLASS = {
 
 let rows = [];
 let inpImage = null;
+let showStarredOnly = false;
 
 function save() { try { localStorage.setItem('gre_errors_v3', JSON.stringify(rows)); } catch(e) {} }
 function load() { try { const d = localStorage.getItem('gre_errors_v3'); if(d) rows = JSON.parse(d); } catch(e) { rows=[]; } }
@@ -891,6 +927,7 @@ function getFiltered() {
   const fr = document.getElementById('filter-review').value;
   const fe = document.getElementById('filter-etype').value;
   return rows.filter(r => {
+    if (showStarredOnly && !r.starred) return false;
     if (ft && r.topic !== ft) return false;
     if (fr && r.review !== fr) return false;
     if (fe && r.etype !== fe) return false;
@@ -921,8 +958,12 @@ function renderTable() {
   tbody.innerHTML = filtered.map((row, fi) => {
     const gi = rows.indexOf(row);
     const ec = ETYPE_CLASS[row.etype] || 'etype-other';
+    const isStarred = row.starred ? true : false;
     
-    return `<tr>
+    return `<tr class="${isStarred ? 'starred-row' : ''}">
+      <td class="star-cell ${isStarred ? 'starred' : 'unstarred'}" onclick="toggleStar(${gi})">
+        ${isStarred ? '★' : '☆'}
+      </td>
       <td class="row-num">${fi+1}</td>
       <td><textarea class="cell-text topic-text" rows="1" onblur="updateField(${gi},'topic',this.value)">${escH(row.topic)}</textarea></td>
       <td><textarea class="cell-text" rows="1" onblur="updateField(${gi},'subtopic',this.value)">${escH(row.subtopic)}</textarea></td>
@@ -954,6 +995,20 @@ function renderTable() {
 
 function updateField(i, field, val) { rows[i][field]=val; save(); }
 
+function toggleStar(i) {
+  rows[i].starred = !rows[i].starred;
+  save();
+  renderTable();
+}
+
+function toggleStarredFilter() {
+  showStarredOnly = !showStarredOnly;
+  const btn = document.getElementById('filter-starred');
+  btn.classList.toggle('active', showStarredOnly);
+  btn.textContent = showStarredOnly ? '★ Showing Starred' : '☆ Show Starred Only';
+  renderTable();
+}
+
 function toggleReview(i) { rows[i].review = rows[i].review==='Reviewed'?'Not Reviewed':'Reviewed'; save(); renderTable(); }
 function deleteRow(i) { rows.splice(i,1); save(); renderTable(); }
 function uploadRowImage(i, input) {
@@ -971,6 +1026,7 @@ function addRow() {
   }
 
   rows.push({
+    starred:  false,
     topic:    document.getElementById('inp-topic').value,
     subtopic: subtopicVal,
     qnum:     document.getElementById('inp-qnum').value.trim(),
@@ -1073,13 +1129,17 @@ function buildInpTopics() {
 
 function resetFilters() {
   ['filter-topic','filter-review','filter-etype'].forEach(id => document.getElementById(id).value='');
+  showStarredOnly = false;
+  const starBtn = document.getElementById('filter-starred');
+  starBtn.classList.remove('active');
+  starBtn.textContent = '☆ Show Starred Only';
   renderTable();
 }
 
 function exportCSV() {
-  const h = ['#','Topic','Subtopic','Q#','Error Type','What I Did','What I Should Have Done','Root Cause','Review'];
+  const h = ['Starred','#','Topic','Subtopic','Q#','Error Type','What I Did','What I Should Have Done','Root Cause','Review'];
   const lines = [h.join(','), ...rows.map((r,i) =>
-    [i+1,...['topic','subtopic','qnum','etype','did','should','root','review'].map(f=>`"${(r[f]||'').replace(/"/g,'""')}"`)]
+    [r.starred?'Y':'N',i+1,...['topic','subtopic','qnum','etype','did','should','root','review'].map(f=>`"${(r[f]||'').replace(/"/g,'""')}"`)]
     .join(',')
   )];
   const a = document.createElement('a');
