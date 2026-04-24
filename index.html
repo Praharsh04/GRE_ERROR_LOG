@@ -67,17 +67,18 @@
   }
 
   .logo-mark {
-    width: 34px;
-    height: 34px;
-    background: linear-gradient(135deg, var(--peach), var(--clay));
-    border-radius: 8px;
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: var(--font-serif);
-    font-size: 16px;
-    color: white;
-    flex-shrink: 0;
+  }
+  .logo-mark img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 8px;
     box-shadow: 0 2px 8px rgba(232,132,106,0.35);
   }
 
@@ -631,7 +632,7 @@
 
 <!-- HEADER -->
 <header class="header">
-  <div class="logo-mark">Q</div>
+  <div class="logo-mark"><img src="logo.png" alt="Q"></div>
   <div>
     <div class="header-title">GRE <em>Quant</em> · Error Log</div>
     <div class="header-sub">Local · No backend · Auto-saved</div>
