@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -721,35 +720,10 @@
   </div>
   <div class="input-row-fields">
     <div class="inp-cell c-topic-inp">
-      <select class="inp-select" id="inp-topic" tabindex="1">
-        <option value="Arithmetic">Arithmetic</option>
-        <option value="Algebra">Algebra</option>
-        <option value="Inequalities and Absolute Values">Inequalities and Absolute Values</option>
-        <option value="Functions, Formulas, and Sequences">Functions, Formulas, and Sequences</option>
-        <option value="Fractions and Decimals">Fractions and Decimals</option>
-        <option value="Percents">Percents</option>
-        <option value="Divisibility and Primes">Divisibility and Primes</option>
-        <option value="Exponents and Roots">Exponents and Roots</option>
-        <option value="Number Properties">Number Properties</option>
-        <option value="Word Problems">Word Problems</option>
-        <option value="Two-Variable Word Problems">Two-Variable Word Problems</option>
-        <option value="Rates and Work">Rates and Work</option>
-        <option value="Variables-in-the-Choices Problems">Variables-in-the-Choices Problems</option>
-        <option value="Ratios">Ratios</option>
-        <option value="Averages, Weighted Averages, Median, and Mode">Averages, Weighted Averages, Median, and Mode</option>
-        <option value="Standard Deviation and Normal Distribution">Standard Deviation and Normal Distribution</option>
-        <option value="Probability, Combinatorics, and Overlapping Sets">Probability, Combinatorics, and Overlapping Sets</option>
-        <option value="Data Interpretation">Data Interpretation</option>
-        <option value="Polygons and Rectangular Solids">Polygons and Rectangular Solids</option>
-        <option value="Circles and Cylinders">Circles and Cylinders</option>
-        <option value="Triangles">Triangles</option>
-        <option value="Coordinate Geometry">Coordinate Geometry</option>
-        <option value="Mixed Geometry">Mixed Geometry</option>
-        <option value="Advanced Quant">Advanced Quant</option>
-      </select>
+      <select class="inp-select" id="inp-topic" tabindex="1"></select>
     </div>
     <div class="inp-cell c-subtopic-inp">
-      <input class="inp-field" type="text" id="inp-subtopic" placeholder="Subtopic…" tabindex="2">
+      <select class="inp-select" id="inp-subtopic" tabindex="2"></select>
     </div>
     <div class="inp-cell c-qnum-inp">
       <input class="inp-field" type="text" id="inp-qnum" placeholder="Q#" tabindex="3">
@@ -800,18 +774,105 @@
 </div>
 
 <script>
-const TOPICS = [
-  "Arithmetic","Algebra","Inequalities and Absolute Values",
-  "Functions, Formulas, and Sequences","Fractions and Decimals","Percents",
-  "Divisibility and Primes","Exponents and Roots","Number Properties",
-  "Word Problems","Two-Variable Word Problems","Rates and Work",
-  "Variables-in-the-Choices Problems","Ratios",
-  "Averages, Weighted Averages, Median, and Mode",
-  "Standard Deviation and Normal Distribution",
-  "Probability, Combinatorics, and Overlapping Sets","Data Interpretation",
-  "Polygons and Rectangular Solids","Circles and Cylinders","Triangles",
-  "Coordinate Geometry","Mixed Geometry","Advanced Quant"
-];
+// 🔹 Topic → Subtopic Mapping (Provided by User)
+const topicSubtopics = {
+  "Arithmetic": [
+    "Integers & Basic Operations",
+    "Place Value",
+    "Fractions & Decimals",
+    "Percents",
+    "Ratios",
+    "Averages"
+  ],
+  "Algebra": [
+    "Linear Equations",
+    "Inequalities",
+    "Systems of Equations",
+    "Exponents & Roots",
+    "Algebraic Expressions"
+  ],
+  "Number Properties": [
+    "Divisibility",
+    "Prime Numbers",
+    "Factors & Multiples",
+    "LCM & GCF",
+    "Remainders",
+    "Units Digit"
+  ],
+  "Word Problems": [
+    "Basic Word Problems",
+    "Rates & Work",
+    "Mixtures",
+    "Two-variable Word Problems",
+    "Variables in Choices"
+  ],
+  "Sequences & Functions": [
+    "Arithmetic Sequences",
+    "Geometric Sequences",
+    "Recursive Sequences",
+    "Functions",
+    "Pattern Recognition"
+  ],
+  "Coordinate Geometry": [
+    "Slope",
+    "Distance",
+    "Midpoint",
+    "Lines & Equations",
+    "Intercepts",
+    "Parallel & Perpendicular Lines",
+    "Graphs of Functions"
+  ],
+  "Geometry (2D)": [
+    "Lines & Angles",
+    "Triangles",
+    "Special Triangles",
+    "Polygons",
+    "Quadrilaterals",
+    "Area & Perimeter"
+  ],
+  "Geometry (3D)": [
+    "Volume",
+    "Surface Area",
+    "Solids"
+  ],
+  "Circles": [
+    "Arcs",
+    "Sectors",
+    "Chords",
+    "Tangents"
+  ],
+  "Data Analysis & Statistics": [
+    "Mean, Median, Mode",
+    "Weighted Average",
+    "Range & IQR",
+    "Standard Deviation",
+    "Charts & Graphs"
+  ],
+  "Sets & Logic": [
+    "Venn Diagrams",
+    "Overlapping Sets",
+    "Inclusion-Exclusion"
+  ],
+  "Combinatorics": [
+    "Counting Principles",
+    "Permutations",
+    "Combinations"
+  ],
+  "Probability": [
+    "Basic Probability",
+    "Independent Events",
+    "Mutually Exclusive Events",
+    "Conditional Probability",
+    "Expected Value"
+  ],
+  "Advanced Quant": [
+    "Mixed Concepts",
+    "Non-standard Problems",
+    "Strategy-based Questions"
+  ]
+};
+
+const TOPICS = Object.keys(topicSubtopics);
 const ERROR_TYPES = ["Silly Mistake","Concept Gap","Misread","Time Pressure","Formula Error","Other"];
 const ETYPE_CLASS = {
   "Silly Mistake":"etype-silly","Concept Gap":"etype-concept","Misread":"etype-misread",
@@ -859,14 +920,20 @@ function renderTable() {
   tbody.innerHTML = filtered.map((row, fi) => {
     const gi = rows.indexOf(row);
     const ec = ETYPE_CLASS[row.etype] || 'etype-other';
+    const subtopics = topicSubtopics[row.topic] || [];
+    
     return `<tr>
       <td class="row-num">${fi+1}</td>
       <td>
-        <select class="cell-select topic-text" onchange="updateField(${gi},'topic',this.value)">
+        <select class="cell-select topic-text" onchange="updateTopic(${gi}, this.value)">
           ${TOPICS.map(t=>`<option value="${escH(t)}" ${row.topic===t?'selected':''}>${escH(t)}</option>`).join('')}
         </select>
       </td>
-      <td><textarea class="cell-text" rows="1" onblur="updateField(${gi},'subtopic',this.value)">${escH(row.subtopic)}</textarea></td>
+      <td>
+        <select class="cell-select" onchange="updateField(${gi},'subtopic',this.value)">
+          ${subtopics.map(s=>`<option value="${escH(s)}" ${row.subtopic===s?'selected':''}>${escH(s)}</option>`).join('')}
+        </select>
+      </td>
       <td><textarea class="cell-text" rows="1" onblur="updateField(${gi},'qnum',this.value)">${escH(row.qnum)}</textarea></td>
       <td>
         <select class="cell-select ${ec}" onchange="updateField(${gi},'etype',this.value)">
@@ -894,6 +961,15 @@ function renderTable() {
 }
 
 function updateField(i, field, val) { rows[i][field]=val; save(); }
+
+function updateTopic(i, val) {
+  rows[i].topic = val;
+  const subtopics = topicSubtopics[val] || [];
+  rows[i].subtopic = subtopics[0] || "";
+  save();
+  renderTable();
+}
+
 function toggleReview(i) { rows[i].review = rows[i].review==='Reviewed'?'Not Reviewed':'Reviewed'; save(); renderTable(); }
 function deleteRow(i) { rows.splice(i,1); save(); renderTable(); }
 function uploadRowImage(i, input) {
@@ -905,8 +981,8 @@ function uploadRowImage(i, input) {
 
 function addRow() {
   rows.push({
-    topic:    document.getElementById('inp-topic').value || 'Arithmetic',
-    subtopic: document.getElementById('inp-subtopic').value.trim(),
+    topic:    document.getElementById('inp-topic').value,
+    subtopic: document.getElementById('inp-subtopic').value,
     qnum:     document.getElementById('inp-qnum').value.trim(),
     etype:    document.getElementById('inp-etype').value,
     did:      document.getElementById('inp-did').value.trim(),
@@ -919,8 +995,9 @@ function addRow() {
 }
 
 function clearInput() {
-  document.getElementById('inp-topic').value = 'Arithmetic';
-  ['inp-subtopic','inp-qnum','inp-did','inp-should','inp-root'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('inp-topic').value = TOPICS[0];
+  updateInpSubtopics();
+  ['inp-qnum','inp-did','inp-should','inp-root'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('inp-etype').value = '';
   document.getElementById('inp-review').value = 'Not Reviewed';
   inpImage = null;
@@ -928,6 +1005,13 @@ function clearInput() {
   document.getElementById('inp-img-label').textContent = '📎 img';
   document.getElementById('inp-img-file').value = '';
   document.getElementById('inp-topic').focus();
+}
+
+function updateInpSubtopics() {
+  const topic = document.getElementById('inp-topic').value;
+  const subtopicSel = document.getElementById('inp-subtopic');
+  const subs = topicSubtopics[topic] || [];
+  subtopicSel.innerHTML = subs.map(s => `<option value="${escH(s)}">${escH(s)}</option>`).join('');
 }
 
 function handleInpImage(input) {
@@ -961,8 +1045,27 @@ document.addEventListener('keydown', e => {
 
 function buildTopicFilter() {
   const sel = document.getElementById('filter-topic');
+  sel.innerHTML = '<option value="">All Topics</option>';
   TOPICS.forEach(t => { const o=document.createElement('option'); o.value=t; o.textContent=t; sel.appendChild(o); });
 }
+
+function buildInpTopics() {
+  const sel = document.getElementById('inp-topic');
+  sel.innerHTML = TOPICS.map(t => `<option value="${escH(t)}">${escH(t)}</option>`).join('');
+  
+  // Update subtopics on change (mouse click or enter)
+  sel.onchange = updateInpSubtopics;
+  
+  // Update subtopics on keyup (Up/Down arrows) for mouse-less navigation
+  sel.addEventListener('keyup', (e) => {
+    if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+      updateInpSubtopics();
+    }
+  });
+  
+  updateInpSubtopics();
+}
+
 function resetFilters() {
   ['filter-topic','filter-review','filter-etype'].forEach(id => document.getElementById(id).value='');
   renderTable();
@@ -979,12 +1082,13 @@ function exportCSV() {
   a.download = `gre_errors_${new Date().toISOString().slice(0,10)}.csv`;
   a.click();
 }
+
 function clearAll() {
   if (!confirm('Delete all entries? Cannot be undone.')) return;
   rows=[]; save(); renderTable();
 }
 
-load(); buildTopicFilter(); renderTable();
+load(); buildTopicFilter(); buildInpTopics(); renderTable();
 document.getElementById('inp-topic').focus();
 </script>
 </body>
