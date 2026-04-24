@@ -1,0 +1,980 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GRE Quant · Error Log</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:          #faf8f5;
+    --bg2:         #f5f1ec;
+    --bg3:         #efe9e1;
+    --surface:     #ffffff;
+    --surface2:    #fdf9f6;
+    --border:      #e8e0d5;
+    --border-dark: #d4c9bb;
+    --peach:       #e8846a;
+    --peach-light: #f2b49e;
+    --peach-faint: #fdf0eb;
+    --peach-mid:   #f5c9b8;
+    --clay:        #c46a4e;
+    --sage:        #7a9e8a;
+    --sage-faint:  #edf4f0;
+    --amber:       #c49a3c;
+    --amber-faint: #fdf5e0;
+    --text:        #2d2520;
+    --text-mid:    #6b5d54;
+    --text-muted:  #a09488;
+    --text-faint:  #c4b8af;
+    --shadow-sm:   0 1px 4px rgba(100,70,50,0.06);
+    --shadow:      0 4px 20px rgba(100,70,50,0.1);
+    --shadow-lg:   0 12px 48px rgba(100,70,50,0.18);
+    --radius:      8px;
+    --radius-lg:   12px;
+    --font-serif:  'DM Serif Display', Georgia, serif;
+    --font-sans:   'Instrument Sans', sans-serif;
+    --font-mono:   'DM Mono', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    background-image:
+      radial-gradient(ellipse 80% 50% at 10% 0%, rgba(232,132,106,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 90% 100%, rgba(196,106,78,0.05) 0%, transparent 50%);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    height: 62px;
+    gap: 24px;
+  }
+
+  .logo-mark {
+    width: 34px;
+    height: 34px;
+    background: linear-gradient(135deg, var(--peach), var(--clay));
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-serif);
+    font-size: 16px;
+    color: white;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(232,132,106,0.35);
+  }
+
+  .header-title {
+    font-family: var(--font-serif);
+    font-size: 20px;
+    color: var(--text);
+    letter-spacing: -0.2px;
+  }
+  .header-title em {
+    font-style: italic;
+    color: var(--peach);
+  }
+  .header-sub {
+    font-size: 10.5px;
+    color: var(--text-muted);
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    font-family: var(--font-mono);
+    font-weight: 300;
+    margin-top: 1px;
+  }
+
+  .header-stats {
+    display: flex;
+    gap: 8px;
+    margin-left: auto;
+    align-items: center;
+  }
+
+  .stat-chip {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 11px;
+    font-family: var(--font-mono);
+    color: var(--text-mid);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .stat-chip strong { color: var(--text); font-weight: 500; }
+  .stat-chip.peach strong { color: var(--peach); }
+  .stat-chip.sage strong { color: var(--sage); }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 7px 14px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border-dark);
+    background: var(--surface);
+    color: var(--text-mid);
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.1px;
+  }
+  .btn:hover { border-color: var(--peach-light); color: var(--peach); background: var(--peach-faint); }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--peach), var(--clay));
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 2px 8px rgba(232,132,106,0.3);
+  }
+  .btn-primary:hover { background: linear-gradient(135deg, var(--peach-light), var(--peach)); color: white; box-shadow: 0 3px 12px rgba(232,132,106,0.4); }
+  .btn-ghost { background: transparent; border-color: transparent; color: var(--text-muted); }
+  .btn-ghost:hover { color: var(--peach); background: var(--peach-faint); border-color: transparent; }
+
+  /* ── FILTER BAR ── */
+  .filter-bar {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 32px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .filter-label {
+    font-size: 10px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: var(--font-mono);
+    font-weight: 400;
+    margin-right: 4px;
+  }
+  .filter-select {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 12px;
+    padding: 6px 12px;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    box-shadow: var(--shadow-sm);
+  }
+  .filter-select:focus { border-color: var(--peach-light); box-shadow: 0 0 0 3px rgba(232,132,106,0.12); }
+  .filter-select option { background: white; }
+
+  .row-count {
+    margin-left: auto;
+    font-size: 11px;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 4px 10px;
+  }
+
+  /* ── TABLE WRAPPER ── */
+  .table-wrapper {
+    overflow-x: auto;
+    padding: 20px 32px 160px;
+  }
+
+  /* ── TABLE ── */
+  table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    min-width: 1120px;
+    table-layout: fixed;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  col.c-num    { width: 42px; }
+  col.c-topic  { width: 158px; }
+  col.c-qnum   { width: 70px; }
+  col.c-etype  { width: 130px; }
+  col.c-did    { width: 175px; }
+  col.c-should { width: 175px; }
+  col.c-root   { width: 155px; }
+  col.c-review { width: 100px; }
+  col.c-image  { width: 80px; }
+  col.c-del    { width: 44px; }
+
+  thead th {
+    background: var(--bg2);
+    color: var(--text-muted);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    font-weight: 600;
+    font-family: var(--font-mono);
+    padding: 11px 10px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-dark);
+    border-right: 1px solid var(--border);
+    user-select: none;
+    white-space: nowrap;
+  }
+  thead th:first-child { padding-left: 14px; border-radius: var(--radius-lg) 0 0 0; }
+  thead th:last-child  { border-right: none; border-radius: 0 var(--radius-lg) 0 0; }
+  thead th.col-accent  { color: var(--peach); }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.1s;
+  }
+  tbody tr:nth-child(even) { background: var(--surface2); }
+  tbody tr:hover { background: var(--peach-faint); }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:last-child td:first-child { border-radius: 0 0 0 var(--radius-lg); }
+  tbody tr:last-child td:last-child  { border-radius: 0 0 var(--radius-lg) 0; }
+
+  tbody td {
+    padding: 0;
+    border-right: 1px solid var(--border);
+    vertical-align: middle;
+    height: 40px;
+  }
+  tbody td:last-child { border-right: none; }
+
+  .row-num {
+    font-size: 10px;
+    color: var(--text-faint);
+    text-align: center;
+    font-family: var(--font-mono);
+    user-select: none;
+  }
+
+  /* Editable textarea cell */
+  .cell-text {
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 8px 10px;
+    background: transparent;
+    border: none;
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 12.5px;
+    outline: none;
+    resize: none;
+    overflow: hidden;
+    white-space: nowrap;
+    cursor: default;
+    line-height: 1.4;
+  }
+  .cell-text:focus {
+    background: rgba(232,132,106,0.05);
+    cursor: text;
+    white-space: pre-wrap;
+    overflow: auto;
+    box-shadow: inset 0 0 0 2px var(--peach-light);
+    border-radius: 4px;
+    color: var(--text);
+  }
+
+  .cell-select {
+    width: 100%;
+    height: 100%;
+    padding: 0 10px;
+    background: transparent;
+    border: none;
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 12.5px;
+    outline: none;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  .cell-select:focus {
+    background: rgba(232,132,106,0.05);
+    box-shadow: inset 0 0 0 2px var(--peach-light);
+    border-radius: 4px;
+  }
+  .cell-select option { background: white; }
+
+  /* Topic display */
+  .topic-text {
+    font-size: 12px;
+    color: var(--clay);
+    font-weight: 500;
+  }
+
+  /* Review badge */
+  .review-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 10.5px;
+    font-weight: 600;
+    font-family: var(--font-mono);
+    cursor: pointer;
+    transition: all 0.15s;
+    margin: 4px 8px;
+    user-select: none;
+    letter-spacing: 0.3px;
+  }
+  .review-pill.reviewed {
+    background: var(--sage-faint);
+    color: var(--sage);
+    border: 1px solid rgba(122,158,138,0.25);
+  }
+  .review-pill.reviewed:hover { background: #d8eddf; }
+  .review-pill.not-reviewed {
+    background: var(--peach-faint);
+    color: var(--peach);
+    border: 1px solid var(--peach-mid);
+  }
+  .review-pill.not-reviewed:hover { background: #fde8e0; }
+
+  /* Error type colors */
+  .etype-silly   { color: var(--amber); }
+  .etype-concept { color: #d04545; }
+  .etype-misread { color: #7c5cbf; }
+  .etype-time    { color: #3a86c8; }
+  .etype-formula { color: #d4700a; }
+  .etype-other   { color: var(--text-mid); }
+
+  /* Image */
+  .img-thumb {
+    width: 34px;
+    height: 34px;
+    object-fit: cover;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 1.5px solid var(--border-dark);
+    display: block;
+    margin: 3px auto;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .img-thumb:hover { transform: scale(1.12); box-shadow: var(--shadow); }
+
+  .img-upload-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    color: var(--text-faint);
+    font-size: 15px;
+    transition: color 0.15s;
+  }
+  .img-upload-btn:hover { color: var(--peach); }
+  .img-upload-btn input { display: none; }
+
+  /* Delete */
+  .del-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-faint);
+    font-size: 12px;
+    transition: color 0.15s;
+  }
+  .del-btn:hover { color: #c44040; }
+
+  /* ── INPUT ROW ── */
+  .input-row-wrapper {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    background: var(--surface);
+    border-top: 2px solid var(--peach-light);
+    box-shadow: 0 -8px 40px rgba(100,70,50,0.12);
+  }
+
+  .input-row-top {
+    padding: 7px 32px 4px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .input-row-eyebrow {
+    font-size: 9.5px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--peach);
+    font-family: var(--font-mono);
+    font-weight: 400;
+  }
+  .shortcut-hint {
+    font-size: 10.5px;
+    color: var(--text-faint);
+    font-family: var(--font-mono);
+    margin-left: auto;
+  }
+  .shortcut-hint kbd {
+    background: var(--bg2);
+    border: 1px solid var(--border-dark);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-mid);
+  }
+
+  .input-row-fields {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    min-width: 1120px;
+    border-top: 1px solid var(--border);
+    overflow-x: auto;
+    background: var(--bg2);
+  }
+
+  .inp-cell {
+    flex: 1;
+    min-width: 0;
+    border-right: 1px solid var(--border);
+    height: 44px;
+    display: flex;
+    align-items: center;
+    background: transparent;
+    transition: background 0.12s;
+  }
+  .inp-cell:focus-within { background: rgba(232,132,106,0.05); }
+  .inp-cell.c-topic-inp  { flex: 0 0 158px; }
+  .inp-cell.c-qnum-inp   { flex: 0 0 70px; }
+  .inp-cell.c-etype-inp  { flex: 0 0 130px; }
+  .inp-cell.c-did-inp    { flex: 0 0 175px; }
+  .inp-cell.c-should-inp { flex: 0 0 175px; }
+  .inp-cell.c-root-inp   { flex: 0 0 155px; }
+  .inp-cell.c-rev-inp    { flex: 0 0 100px; }
+  .inp-cell.c-img-inp    { flex: 0 0 80px; border-right: none; }
+
+  .inp-field {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 12.5px;
+    padding: 0 10px;
+  }
+  .inp-field::placeholder { color: var(--text-faint); }
+
+  .inp-select {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 12.5px;
+    padding: 0 10px;
+    appearance: none;
+    cursor: pointer;
+  }
+  .inp-select option { background: white; }
+
+  .inp-img-btn {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-faint);
+    gap: 4px;
+    font-size: 11.5px;
+    transition: color 0.15s;
+  }
+  .inp-img-btn:hover { color: var(--peach); }
+  .inp-img-btn input { display: none; }
+  #inp-img-preview {
+    width: 28px;
+    height: 28px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1.5px solid var(--peach-light);
+    display: none;
+  }
+
+  .input-row-bottom {
+    padding: 7px 32px 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--surface);
+  }
+
+  .add-btn {
+    background: linear-gradient(135deg, var(--peach) 0%, var(--clay) 100%);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    font-family: var(--font-sans);
+    font-size: 12.5px;
+    font-weight: 600;
+    padding: 8px 20px;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 2px 10px rgba(232,132,106,0.35);
+    letter-spacing: 0.1px;
+  }
+  .add-btn:hover { box-shadow: 0 4px 16px rgba(232,132,106,0.45); transform: translateY(-1px); }
+  .add-btn:active { transform: translateY(0); }
+
+  /* ── EMPTY STATE ── */
+  .empty-state {
+    text-align: center;
+    padding: 72px 20px;
+    color: var(--text-muted);
+  }
+  .empty-icon {
+    font-size: 40px;
+    margin-bottom: 14px;
+    opacity: 0.5;
+  }
+  .empty-state h3 {
+    font-family: var(--font-serif);
+    font-size: 22px;
+    color: var(--text-mid);
+    margin-bottom: 8px;
+    font-weight: 400;
+  }
+  .empty-state p { font-size: 12.5px; color: var(--text-muted); }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(45,37,32,0.7);
+    z-index: 999;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(6px);
+  }
+  .modal-overlay.open { display: flex; }
+  .modal-img {
+    max-width: 88vw;
+    max-height: 86vh;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    border: 2px solid rgba(255,255,255,0.3);
+  }
+  .modal-close {
+    position: absolute;
+    top: 20px;
+    right: 24px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text);
+    font-size: 14px;
+    box-shadow: var(--shadow);
+    transition: background 0.15s;
+  }
+  .modal-close:hover { background: var(--peach); color: white; border-color: var(--peach); }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: var(--bg2); }
+  ::-webkit-scrollbar-thumb { background: var(--border-dark); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--peach-light); }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="logo-mark">Q</div>
+  <div>
+    <div class="header-title">GRE <em>Quant</em> · Error Log</div>
+    <div class="header-sub">Local · No backend · Auto-saved</div>
+  </div>
+  <div class="header-stats">
+    <div class="stat-chip">Total <strong id="stat-total">0</strong></div>
+    <div class="stat-chip sage">Reviewed <strong id="stat-reviewed">0</strong></div>
+    <div class="stat-chip peach">Pending <strong id="stat-pending">0</strong></div>
+  </div>
+  <button class="btn btn-ghost" onclick="clearAll()" style="margin-left:4px;">🗑 Clear All</button>
+  <button class="btn btn-primary" onclick="exportCSV()">↓ Export CSV</button>
+</header>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <span class="filter-label">Filter by:</span>
+  <select class="filter-select" id="filter-topic" onchange="renderTable()">
+    <option value="">All Topics</option>
+  </select>
+  <select class="filter-select" id="filter-review" onchange="renderTable()">
+    <option value="">All Status</option>
+    <option value="Reviewed">✓ Reviewed</option>
+    <option value="Not Reviewed">✗ Not Reviewed</option>
+  </select>
+  <select class="filter-select" id="filter-etype" onchange="renderTable()">
+    <option value="">All Error Types</option>
+    <option value="Silly Mistake">Silly Mistake</option>
+    <option value="Concept Gap">Concept Gap</option>
+    <option value="Misread">Misread</option>
+    <option value="Time Pressure">Time Pressure</option>
+    <option value="Formula Error">Formula Error</option>
+    <option value="Other">Other</option>
+  </select>
+  <button class="btn btn-ghost" onclick="resetFilters()" style="font-size:11px;">✕ Reset</button>
+  <span class="row-count" id="row-count">0 rows</span>
+</div>
+
+<!-- TABLE -->
+<div class="table-wrapper">
+  <table>
+    <colgroup>
+      <col class="c-num">
+      <col class="c-topic">
+      <col class="c-qnum">
+      <col class="c-etype">
+      <col class="c-did">
+      <col class="c-should">
+      <col class="c-root">
+      <col class="c-review">
+      <col class="c-image">
+      <col class="c-del">
+    </colgroup>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th class="col-accent">Topic</th>
+        <th>Q#</th>
+        <th>Error Type</th>
+        <th>What I Did</th>
+        <th>What I Should've Done</th>
+        <th>Root Cause</th>
+        <th>Review</th>
+        <th>Image</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody id="table-body"></tbody>
+  </table>
+  <div id="empty-state" class="empty-state" style="display:none;">
+    <div class="empty-icon">📋</div>
+    <h3>No errors logged yet</h3>
+    <p>Use the entry row below — press Enter or click Add Row to begin.</p>
+  </div>
+</div>
+
+<!-- INPUT ROW -->
+<div class="input-row-wrapper">
+  <div class="input-row-top">
+    <span class="input-row-eyebrow">+ New entry</span>
+    <span class="shortcut-hint"><kbd>Enter</kbd> to add · <kbd>Tab</kbd> to move</span>
+  </div>
+  <div class="input-row-fields">
+    <div class="inp-cell c-topic-inp">
+      <select class="inp-select" id="inp-topic" tabindex="1">
+        <option value="Arithmetic">Arithmetic</option>
+        <option value="Algebra">Algebra</option>
+        <option value="Inequalities and Absolute Values">Inequalities and Absolute Values</option>
+        <option value="Functions, Formulas, and Sequences">Functions, Formulas, and Sequences</option>
+        <option value="Fractions and Decimals">Fractions and Decimals</option>
+        <option value="Percents">Percents</option>
+        <option value="Divisibility and Primes">Divisibility and Primes</option>
+        <option value="Exponents and Roots">Exponents and Roots</option>
+        <option value="Number Properties">Number Properties</option>
+        <option value="Word Problems">Word Problems</option>
+        <option value="Two-Variable Word Problems">Two-Variable Word Problems</option>
+        <option value="Rates and Work">Rates and Work</option>
+        <option value="Variables-in-the-Choices Problems">Variables-in-the-Choices Problems</option>
+        <option value="Ratios">Ratios</option>
+        <option value="Averages, Weighted Averages, Median, and Mode">Averages, Weighted Averages, Median, and Mode</option>
+        <option value="Standard Deviation and Normal Distribution">Standard Deviation and Normal Distribution</option>
+        <option value="Probability, Combinatorics, and Overlapping Sets">Probability, Combinatorics, and Overlapping Sets</option>
+        <option value="Data Interpretation">Data Interpretation</option>
+        <option value="Polygons and Rectangular Solids">Polygons and Rectangular Solids</option>
+        <option value="Circles and Cylinders">Circles and Cylinders</option>
+        <option value="Triangles">Triangles</option>
+        <option value="Coordinate Geometry">Coordinate Geometry</option>
+        <option value="Mixed Geometry">Mixed Geometry</option>
+        <option value="Advanced Quant">Advanced Quant</option>
+      </select>
+    </div>
+    <div class="inp-cell c-qnum-inp">
+      <input class="inp-field" type="text" id="inp-qnum" placeholder="Q#" tabindex="2">
+    </div>
+    <div class="inp-cell c-etype-inp">
+      <select class="inp-select" id="inp-etype" tabindex="3">
+        <option value="">Error Type…</option>
+        <option value="Silly Mistake">Silly Mistake</option>
+        <option value="Concept Gap">Concept Gap</option>
+        <option value="Misread">Misread</option>
+        <option value="Time Pressure">Time Pressure</option>
+        <option value="Formula Error">Formula Error</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+    <div class="inp-cell c-did-inp">
+      <input class="inp-field" type="text" id="inp-did" placeholder="What I did…" tabindex="4">
+    </div>
+    <div class="inp-cell c-should-inp">
+      <input class="inp-field" type="text" id="inp-should" placeholder="What I should've done…" tabindex="5">
+    </div>
+    <div class="inp-cell c-root-inp">
+      <input class="inp-field" type="text" id="inp-root" placeholder="Root cause…" tabindex="6">
+    </div>
+    <div class="inp-cell c-rev-inp">
+      <select class="inp-select" id="inp-review" tabindex="7">
+        <option value="Not Reviewed">Not Reviewed</option>
+        <option value="Reviewed">Reviewed</option>
+      </select>
+    </div>
+    <div class="inp-cell c-img-inp">
+      <label class="inp-img-btn" tabindex="8">
+        <img id="inp-img-preview" src="" alt="">
+        <span id="inp-img-label">📎 img</span>
+        <input type="file" id="inp-img-file" accept="image/*" onchange="handleInpImage(this)">
+      </label>
+    </div>
+  </div>
+  <div class="input-row-bottom">
+    <button class="add-btn" onclick="addRow()">＋ Add Row</button>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="img-modal" onclick="closeModal(event)">
+  <div class="modal-close" onclick="closeModal()">✕</div>
+  <img class="modal-img" id="modal-img-el" src="" alt="Question Image">
+</div>
+
+<script>
+const TOPICS = [
+  "Arithmetic","Algebra","Inequalities and Absolute Values",
+  "Functions, Formulas, and Sequences","Fractions and Decimals","Percents",
+  "Divisibility and Primes","Exponents and Roots","Number Properties",
+  "Word Problems","Two-Variable Word Problems","Rates and Work",
+  "Variables-in-the-Choices Problems","Ratios",
+  "Averages, Weighted Averages, Median, and Mode",
+  "Standard Deviation and Normal Distribution",
+  "Probability, Combinatorics, and Overlapping Sets","Data Interpretation",
+  "Polygons and Rectangular Solids","Circles and Cylinders","Triangles",
+  "Coordinate Geometry","Mixed Geometry","Advanced Quant"
+];
+const ERROR_TYPES = ["Silly Mistake","Concept Gap","Misread","Time Pressure","Formula Error","Other"];
+const ETYPE_CLASS = {
+  "Silly Mistake":"etype-silly","Concept Gap":"etype-concept","Misread":"etype-misread",
+  "Time Pressure":"etype-time","Formula Error":"etype-formula","Other":"etype-other"
+};
+
+let rows = [];
+let inpImage = null;
+
+function save() { try { localStorage.setItem('gre_errors_v3', JSON.stringify(rows)); } catch(e) {} }
+function load() { try { const d = localStorage.getItem('gre_errors_v3'); if(d) rows = JSON.parse(d); } catch(e) { rows=[]; } }
+
+function getFiltered() {
+  const ft = document.getElementById('filter-topic').value;
+  const fr = document.getElementById('filter-review').value;
+  const fe = document.getElementById('filter-etype').value;
+  return rows.filter(r => {
+    if (ft && r.topic !== ft) return false;
+    if (fr && r.review !== fr) return false;
+    if (fe && r.etype !== fe) return false;
+    return true;
+  });
+}
+
+function escH(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function renderTable() {
+  const tbody = document.getElementById('table-body');
+  const filtered = getFiltered();
+  document.getElementById('row-count').textContent = `${filtered.length} row${filtered.length!==1?'s':''}`;
+  document.getElementById('stat-total').textContent = rows.length;
+  const rev = rows.filter(r => r.review === 'Reviewed').length;
+  document.getElementById('stat-reviewed').textContent = rev;
+  document.getElementById('stat-pending').textContent = rows.length - rev;
+
+  if (!filtered.length) {
+    tbody.innerHTML = '';
+    document.getElementById('empty-state').style.display = 'block';
+    return;
+  }
+  document.getElementById('empty-state').style.display = 'none';
+
+  tbody.innerHTML = filtered.map((row, fi) => {
+    const gi = rows.indexOf(row);
+    const ec = ETYPE_CLASS[row.etype] || 'etype-other';
+    return `<tr>
+      <td class="row-num">${fi+1}</td>
+      <td>
+        <select class="cell-select topic-text" onchange="updateField(${gi},'topic',this.value)">
+          ${TOPICS.map(t=>`<option value="${escH(t)}" ${row.topic===t?'selected':''}>${escH(t)}</option>`).join('')}
+        </select>
+      </td>
+      <td><textarea class="cell-text" rows="1" onblur="updateField(${gi},'qnum',this.value)">${escH(row.qnum)}</textarea></td>
+      <td>
+        <select class="cell-select ${ec}" onchange="updateField(${gi},'etype',this.value)">
+          <option value="">—</option>
+          ${ERROR_TYPES.map(t=>`<option value="${t}" ${row.etype===t?'selected':''}>${t}</option>`).join('')}
+        </select>
+      </td>
+      <td><textarea class="cell-text" rows="1" onblur="updateField(${gi},'did',this.value)">${escH(row.did)}</textarea></td>
+      <td><textarea class="cell-text" rows="1" onblur="updateField(${gi},'should',this.value)">${escH(row.should)}</textarea></td>
+      <td><textarea class="cell-text" rows="1" onblur="updateField(${gi},'root',this.value)">${escH(row.root)}</textarea></td>
+      <td>
+        <div class="review-pill ${row.review==='Reviewed'?'reviewed':'not-reviewed'}" onclick="toggleReview(${gi})">
+          ${row.review==='Reviewed'?'✓ Done':'✗ Pending'}
+        </div>
+      </td>
+      <td style="text-align:center;">
+        ${row.image
+          ? `<img class="img-thumb" src="${row.image}" onclick="openModal(${gi})" alt="img">`
+          : `<label class="img-upload-btn" title="Upload image">📎<input type="file" accept="image/*" onchange="uploadRowImage(${gi},this)"></label>`
+        }
+      </td>
+      <td><button class="del-btn" onclick="deleteRow(${gi})">✕</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function updateField(i, field, val) { rows[i][field]=val; save(); }
+function toggleReview(i) { rows[i].review = rows[i].review==='Reviewed'?'Not Reviewed':'Reviewed'; save(); renderTable(); }
+function deleteRow(i) { rows.splice(i,1); save(); renderTable(); }
+function uploadRowImage(i, input) {
+  const f = input.files[0]; if(!f) return;
+  const r = new FileReader();
+  r.onload = e => { rows[i].image = e.target.result; save(); renderTable(); };
+  r.readAsDataURL(f);
+}
+
+function addRow() {
+  rows.push({
+    topic:  document.getElementById('inp-topic').value || 'Arithmetic',
+    qnum:   document.getElementById('inp-qnum').value.trim(),
+    etype:  document.getElementById('inp-etype').value,
+    did:    document.getElementById('inp-did').value.trim(),
+    should: document.getElementById('inp-should').value.trim(),
+    root:   document.getElementById('inp-root').value.trim(),
+    review: document.getElementById('inp-review').value || 'Not Reviewed',
+    image:  inpImage
+  });
+  save(); clearInput(); renderTable();
+}
+
+function clearInput() {
+  document.getElementById('inp-topic').value = 'Arithmetic';
+  ['inp-qnum','inp-did','inp-should','inp-root'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('inp-etype').value = '';
+  document.getElementById('inp-review').value = 'Not Reviewed';
+  inpImage = null;
+  document.getElementById('inp-img-preview').style.display = 'none';
+  document.getElementById('inp-img-label').textContent = '📎 img';
+  document.getElementById('inp-img-file').value = '';
+  document.getElementById('inp-topic').focus();
+}
+
+function handleInpImage(input) {
+  const f = input.files[0]; if(!f) return;
+  const r = new FileReader();
+  r.onload = e => {
+    inpImage = e.target.result;
+    const p = document.getElementById('inp-img-preview');
+    p.src = inpImage; p.style.display = 'block';
+    document.getElementById('inp-img-label').textContent = '';
+  };
+  r.readAsDataURL(f);
+}
+
+function openModal(i) {
+  const row = rows[i]; if(!row||!row.image) return;
+  document.getElementById('modal-img-el').src = row.image;
+  document.getElementById('img-modal').classList.add('open');
+}
+function closeModal(e) {
+  if (!e || e.target===document.getElementById('img-modal') || e.currentTarget?.classList.contains('modal-close'))
+    document.getElementById('img-modal').classList.remove('open');
+}
+document.addEventListener('keydown', e => {
+  if (e.key==='Escape') document.getElementById('img-modal').classList.remove('open');
+  const inpIds = ['inp-topic','inp-qnum','inp-etype','inp-did','inp-should','inp-root','inp-review'];
+  if (e.key==='Enter' && !e.shiftKey && inpIds.includes(document.activeElement?.id)) {
+    e.preventDefault(); addRow();
+  }
+});
+
+function buildTopicFilter() {
+  const sel = document.getElementById('filter-topic');
+  TOPICS.forEach(t => { const o=document.createElement('option'); o.value=t; o.textContent=t; sel.appendChild(o); });
+}
+function resetFilters() {
+  ['filter-topic','filter-review','filter-etype'].forEach(id => document.getElementById(id).value='');
+  renderTable();
+}
+
+function exportCSV() {
+  const h = ['#','Topic','Q#','Error Type','What I Did','What I Should Have Done','Root Cause','Review'];
+  const lines = [h.join(','), ...rows.map((r,i) =>
+    [i+1,...['topic','qnum','etype','did','should','root','review'].map(f=>`"${(r[f]||'').replace(/"/g,'""')}"`)]
+    .join(',')
+  )];
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([lines.join('\n')],{type:'text/csv'}));
+  a.download = `gre_errors_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+}
+function clearAll() {
+  if (!confirm('Delete all entries? Cannot be undone.')) return;
+  rows=[]; save(); renderTable();
+}
+
+load(); buildTopicFilter(); renderTable();
+document.getElementById('inp-topic').focus();
+</script>
+</body>
+</html>
