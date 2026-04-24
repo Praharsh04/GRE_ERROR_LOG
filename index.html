@@ -676,8 +676,7 @@
     <div class="stat-chip sage">Reviewed <strong id="stat-reviewed">0</strong></div>
     <div class="stat-chip peach">Pending <strong id="stat-pending">0</strong></div>
   </div>
-  <button class="btn btn-ghost" onclick="clearAll()" style="margin-left:4px;">🗑 Clear All</button>
-  <button class="btn btn-primary" onclick="exportCSV()">↓ Export CSV</button>
+  <button class="btn btn-primary" onclick="exportCSV()" style="margin-left:4px;">↓ Export CSV</button>
 </header>
 
 <!-- FILTER BAR -->
@@ -1146,11 +1145,6 @@ function exportCSV() {
   a.href = URL.createObjectURL(new Blob([lines.join('\n')],{type:'text/csv'}));
   a.download = `gre_errors_${new Date().toISOString().slice(0,10)}.csv`;
   a.click();
-}
-
-function clearAll() {
-  if (!confirm('Delete all entries? Cannot be undone.')) return;
-  rows=[]; save(); renderTable();
 }
 
 load(); buildTopicFilter(); buildInpTopics(); renderTable();
