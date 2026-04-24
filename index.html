@@ -750,7 +750,7 @@
 <div class="input-row-wrapper">
   <div class="input-row-top">
     <span class="input-row-eyebrow">+ New entry</span>
-    <span class="shortcut-hint"><kbd>Enter</kbd> to add · <kbd>Tab</kbd> to move</span>
+    <span class="shortcut-hint"><kbd>Enter</kbd> to add · <kbd>Tab</kbd> to move · <kbd>Ctrl+V</kbd> to paste img</span>
   </div>
   <div class="input-row-fields">
     <div class="inp-cell c-topic-inp">
@@ -984,7 +984,7 @@ function renderTable() {
       <td style="text-align:center;">
         ${row.image
           ? `<img class="img-thumb" src="${row.image}" onclick="openModal(${gi})" alt="img">`
-          : `<label class="img-upload-btn" title="Upload image">📎<input type="file" accept="image/*" onchange="uploadRowImage(${gi},this)"></label>`
+          : `<label class="img-upload-btn" title="Upload image">📎<input type="file" accept="image/*" onchange="handleInpImage(this)"></label>`
         }
       </td>
       <td><button class="del-btn" onclick="deleteRow(${gi})">✕</button></td>
@@ -1074,8 +1074,9 @@ function checkSubtopicOther(sel) {
   }
 }
 
-function handleInpImage(input) {
-  const f = input.files[0]; if(!f) return;
+function handleInpImage(inputOrFile) {
+  const f = inputOrFile.files ? inputOrFile.files[0] : inputOrFile;
+  if(!f) return;
   const r = new FileReader();
   r.onload = e => {
     inpImage = e.target.result;
@@ -1085,6 +1086,18 @@ function handleInpImage(input) {
   };
   r.readAsDataURL(f);
 }
+
+// 🔹 Global Paste Event Listener for Images
+document.addEventListener('paste', e => {
+  const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+  for (const item of items) {
+    if (item.kind === 'file' && item.type.startsWith('image/')) {
+      const blob = item.getAsFile();
+      handleInpImage(blob);
+      break;
+    }
+  }
+});
 
 function openModal(i) {
   const row = rows[i]; if(!row||!row.image) return;
