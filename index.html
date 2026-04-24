@@ -723,7 +723,8 @@
       <select class="inp-select" id="inp-topic" tabindex="1"></select>
     </div>
     <div class="inp-cell c-subtopic-inp">
-      <select class="inp-select" id="inp-subtopic" tabindex="2"></select>
+      <select class="inp-select" id="inp-subtopic" tabindex="2" onchange="checkSubtopicOther(this)"></select>
+      <input class="inp-field" type="text" id="inp-subtopic-other" placeholder="Specify subtopic..." style="display:none;" tabindex="2">
     </div>
     <div class="inp-cell c-qnum-inp">
       <input class="inp-field" type="text" id="inp-qnum" placeholder="Q#" tabindex="3">
@@ -920,20 +921,11 @@ function renderTable() {
   tbody.innerHTML = filtered.map((row, fi) => {
     const gi = rows.indexOf(row);
     const ec = ETYPE_CLASS[row.etype] || 'etype-other';
-    const subtopics = topicSubtopics[row.topic] || [];
     
     return `<tr>
       <td class="row-num">${fi+1}</td>
-      <td>
-        <select class="cell-select topic-text" onchange="updateTopic(${gi}, this.value)">
-          ${TOPICS.map(t=>`<option value="${escH(t)}" ${row.topic===t?'selected':''}>${escH(t)}</option>`).join('')}
-        </select>
-      </td>
-      <td>
-        <select class="cell-select" onchange="updateField(${gi},'subtopic',this.value)">
-          ${subtopics.map(s=>`<option value="${escH(s)}" ${row.subtopic===s?'selected':''}>${escH(s)}</option>`).join('')}
-        </select>
-      </td>
+      <td><textarea class="cell-text topic-text" rows="1" onblur="updateField(${gi},'topic',this.value)">${escH(row.topic)}</textarea></td>
+      <td><textarea class="cell-text" rows="1" onblur="updateField(${gi},'subtopic',this.value)">${escH(row.subtopic)}</textarea></td>
       <td><textarea class="cell-text" rows="1" onblur="updateField(${gi},'qnum',this.value)">${escH(row.qnum)}</textarea></td>
       <td>
         <select class="cell-select ${ec}" onchange="updateField(${gi},'etype',this.value)">
@@ -962,14 +954,6 @@ function renderTable() {
 
 function updateField(i, field, val) { rows[i][field]=val; save(); }
 
-function updateTopic(i, val) {
-  rows[i].topic = val;
-  const subtopics = topicSubtopics[val] || [];
-  rows[i].subtopic = subtopics[0] || "";
-  save();
-  renderTable();
-}
-
 function toggleReview(i) { rows[i].review = rows[i].review==='Reviewed'?'Not Reviewed':'Reviewed'; save(); renderTable(); }
 function deleteRow(i) { rows.splice(i,1); save(); renderTable(); }
 function uploadRowImage(i, input) {
@@ -980,9 +964,15 @@ function uploadRowImage(i, input) {
 }
 
 function addRow() {
+  const subtopicSel = document.getElementById('inp-subtopic');
+  let subtopicVal = subtopicSel.value;
+  if (subtopicVal === 'Other') {
+    subtopicVal = document.getElementById('inp-subtopic-other').value.trim() || 'Other';
+  }
+
   rows.push({
     topic:    document.getElementById('inp-topic').value,
-    subtopic: document.getElementById('inp-subtopic').value,
+    subtopic: subtopicVal,
     qnum:     document.getElementById('inp-qnum').value.trim(),
     etype:    document.getElementById('inp-etype').value,
     did:      document.getElementById('inp-did').value.trim(),
@@ -997,7 +987,9 @@ function addRow() {
 function clearInput() {
   document.getElementById('inp-topic').value = TOPICS[0];
   updateInpSubtopics();
-  ['inp-qnum','inp-did','inp-should','inp-root'].forEach(id => document.getElementById(id).value = '');
+  ['inp-qnum','inp-did','inp-should','inp-root', 'inp-subtopic-other'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('inp-subtopic').style.display = 'block';
+  document.getElementById('inp-subtopic-other').style.display = 'none';
   document.getElementById('inp-etype').value = '';
   document.getElementById('inp-review').value = 'Not Reviewed';
   inpImage = null;
@@ -1011,7 +1003,20 @@ function updateInpSubtopics() {
   const topic = document.getElementById('inp-topic').value;
   const subtopicSel = document.getElementById('inp-subtopic');
   const subs = topicSubtopics[topic] || [];
-  subtopicSel.innerHTML = subs.map(s => `<option value="${escH(s)}">${escH(s)}</option>`).join('');
+  subtopicSel.innerHTML = subs.map(s => `<option value="${escH(s)}">${escH(s)}</option>`).join('') + '<option value="Other">Other...</option>';
+  
+  // Reset visibility if topic changes
+  subtopicSel.style.display = 'block';
+  document.getElementById('inp-subtopic-other').style.display = 'none';
+}
+
+function checkSubtopicOther(sel) {
+  const otherInp = document.getElementById('inp-subtopic-other');
+  if (sel.value === 'Other') {
+    sel.style.display = 'none';
+    otherInp.style.display = 'block';
+    otherInp.focus();
+  }
 }
 
 function handleInpImage(input) {
@@ -1037,7 +1042,7 @@ function closeModal(e) {
 }
 document.addEventListener('keydown', e => {
   if (e.key==='Escape') document.getElementById('img-modal').classList.remove('open');
-  const inpIds = ['inp-topic','inp-subtopic','inp-qnum','inp-etype','inp-did','inp-should','inp-root','inp-review'];
+  const inpIds = ['inp-topic','inp-subtopic','inp-subtopic-other','inp-qnum','inp-etype','inp-did','inp-should','inp-root','inp-review'];
   if (e.key==='Enter' && !e.shiftKey && inpIds.includes(document.activeElement?.id)) {
     e.preventDefault(); addRow();
   }
