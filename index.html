@@ -742,6 +742,145 @@
   ::-webkit-scrollbar-track { background: var(--bg2); }
   ::-webkit-scrollbar-thumb { background: var(--border-dark); border-radius: 3px; }
   ::-webkit-scrollbar-thumb:hover { background: var(--peach-light); }
+
+  /* ── MOBILE RESPONSIVENESS ── */
+  @media (max-width: 768px) {
+    .header {
+      padding: 0 16px;
+      height: auto;
+      padding-top: 12px;
+      padding-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .header-stats {
+      width: 100%;
+      margin-left: 0;
+      justify-content: space-between;
+      order: 3;
+    }
+    .theme-toggle {
+      margin-left: auto;
+    }
+
+    .filter-bar {
+      padding: 12px 16px;
+    }
+    .row-count {
+      width: 100%;
+      margin-left: 0;
+      margin-top: 8px;
+      text-align: center;
+    }
+
+    .table-wrapper {
+      padding: 12px 12px 200px;
+    }
+
+    /* Transform table to cards on mobile */
+    table, thead, tbody, th, td, tr {
+      display: block;
+    }
+    thead tr {
+      position: absolute;
+      top: -9999px;
+      left: -9999px;
+    }
+    table {
+      min-width: 0;
+      border: none;
+      background: transparent;
+      box-shadow: none;
+    }
+    tbody tr {
+      background: var(--surface) !important;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      margin-bottom: 16px;
+      padding: 12px;
+      box-shadow: var(--shadow-sm);
+      position: relative;
+    }
+    tbody td {
+      border: none;
+      height: auto;
+      padding: 6px 0;
+      padding-left: 40%;
+      position: relative;
+      text-align: left;
+      min-height: 32px;
+    }
+    tbody td::before {
+      content: attr(data-label);
+      position: absolute;
+      left: 0;
+      width: 35%;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    
+    /* Specific overrides for mobile card cells */
+    .star-cell { padding-left: 0; position: absolute; top: 12px; right: 12px; width: auto; }
+    .star-cell::before { display: none; }
+    .row-num { position: absolute; top: 12px; left: 12px; padding-left: 0; color: var(--peach); font-weight: 600; }
+    .row-num::before { display: none; }
+    
+    .cell-text, .cell-select {
+      padding: 4px 0;
+      white-space: normal;
+      height: auto;
+    }
+    .review-pill { margin: 4px 0; }
+    .del-btn {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      width: 32px;
+      height: 32px;
+      background: var(--bg2);
+      border-radius: 50%;
+    }
+
+    /* Input Row Mobile */
+    .input-row-wrapper {
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    .input-row-top {
+      padding: 8px 16px;
+    }
+    .shortcut-hint { display: none; }
+    
+    .input-row-fields {
+      display: block;
+      min-width: 0;
+      max-height: 40vh;
+      overflow-y: auto;
+      padding: 8px 16px;
+    }
+    .inp-cell {
+      border-right: none;
+      border-bottom: 1px solid var(--border);
+      height: auto;
+      padding: 4px 0;
+      flex: none;
+      width: 100% !important;
+    }
+    .inp-cell:last-child { border-bottom: none; }
+    .inp-field, .inp-select {
+      padding: 10px 0;
+    }
+    .input-row-bottom {
+      padding: 12px 16px;
+    }
+    .add-btn {
+      width: 100%;
+      justify-content: center;
+      padding: 12px;
+    }
+  }
 </style>
 </head>
 <body>
@@ -1054,25 +1193,25 @@ function renderTable() {
       <td class="star-cell ${isStarred ? 'starred' : 'unstarred'}" onclick="toggleStar(${gi})">
         ${isStarred ? '★' : '☆'}
       </td>
-      <td class="row-num">${fi+1}</td>
-      <td><textarea class="cell-text topic-text" rows="1" onblur="updateField(${gi},'topic',this.value)">${escH(row.topic)}</textarea></td>
-      <td><textarea class="cell-text" rows="1" onblur="updateField(${gi},'subtopic',this.value)">${escH(row.subtopic)}</textarea></td>
-      <td><textarea class="cell-text" rows="1" onblur="updateField(${gi},'qnum',this.value)">${escH(row.qnum)}</textarea></td>
-      <td>
+      <td class="row-num" data-label="#">${fi+1}</td>
+      <td data-label="Topic"><textarea class="cell-text topic-text" rows="1" onblur="updateField(${gi},'topic',this.value)">${escH(row.topic)}</textarea></td>
+      <td data-label="Subtopic"><textarea class="cell-text" rows="1" onblur="updateField(${gi},'subtopic',this.value)">${escH(row.subtopic)}</textarea></td>
+      <td data-label="Q#"><textarea class="cell-text" rows="1" onblur="updateField(${gi},'qnum',this.value)">${escH(row.qnum)}</textarea></td>
+      <td data-label="Error Type">
         <select class="cell-select ${ec}" onchange="updateField(${gi},'etype',this.value)">
           <option value="">—</option>
           ${ERROR_TYPES.map(t=>`<option value="${t}" ${row.etype===t?'selected':''}>${t}</option>`).join('')}
         </select>
       </td>
-      <td><textarea class="cell-text" rows="1" onblur="updateField(${gi},'did',this.value)">${escH(row.did)}</textarea></td>
-      <td><textarea class="cell-text" rows="1" onblur="updateField(${gi},'should',this.value)">${escH(row.should)}</textarea></td>
-      <td><textarea class="cell-text" rows="1" onblur="updateField(${gi},'root',this.value)">${escH(row.root)}</textarea></td>
-      <td>
+      <td data-label="What I Did"><textarea class="cell-text" rows="1" onblur="updateField(${gi},'did',this.value)">${escH(row.did)}</textarea></td>
+      <td data-label="What I Should've Done"><textarea class="cell-text" rows="1" onblur="updateField(${gi},'should',this.value)">${escH(row.should)}</textarea></td>
+      <td data-label="Root Cause"><textarea class="cell-text" rows="1" onblur="updateField(${gi},'root',this.value)">${escH(row.root)}</textarea></td>
+      <td data-label="Review">
         <div class="review-pill ${row.review==='Reviewed'?'reviewed':'not-reviewed'}" onclick="toggleReview(${gi})">
           ${row.review==='Reviewed'?'✓ Done':'✗ Pending'}
         </div>
       </td>
-      <td style="text-align:center;">
+      <td data-label="Image" style="text-align:center;">
         ${row.image
           ? `<img class="img-thumb" src="${row.image}" onclick="openModal(${gi})" alt="img">`
           : `<label class="img-upload-btn" title="Upload image">📎<input type="file" accept="image/*" onchange="handleInpImage(this)"></label>`
