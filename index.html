@@ -196,6 +196,181 @@
     border-color: var(--peach-light);
     background: var(--bg2);
   }
+  /* ── NAVIGATION BAR ── */
+  .nav-bar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    padding: 0 32px;
+    gap: 32px;
+    height: 48px;
+    align-items: center;
+  }
+  .nav-item {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    cursor: pointer;
+    position: relative;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    transition: color 0.2s;
+  }
+  .nav-item:hover { color: var(--peach); }
+  .nav-item.active { color: var(--peach); }
+  .nav-item.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--peach);
+  }
+
+  /* ── PRACTICE SECTION ── */
+  .practice-welcome {
+    max-width: 800px;
+    margin: 60px auto;
+    text-align: center;
+    padding: 0 24px;
+  }
+  .practice-welcome h2 {
+    font-family: var(--font-serif);
+    font-size: 32px;
+    margin-bottom: 12px;
+  }
+  .practice-welcome p {
+    color: var(--text-mid);
+    margin-bottom: 40px;
+    font-size: 15px;
+  }
+  .mode-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .mode-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 32px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .mode-card:hover {
+    border-color: var(--peach-light);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+  }
+  .mode-card .icon { font-size: 32px; margin-bottom: 8px; }
+  .mode-card h3 { font-family: var(--font-serif); font-size: 20px; }
+  .mode-card p { font-size: 13px; color: var(--text-muted); margin-bottom: 0; }
+
+  .practice-screen {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 24px;
+  }
+  .topic-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+    margin-top: 24px;
+  }
+  .topic-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 16px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .topic-card:hover { border-color: var(--peach); background: var(--peach-faint); }
+  .topic-card .count { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); }
+
+  .question-container {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 40px;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+  }
+  .q-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 16px;
+  }
+  .q-meta { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); text-transform: uppercase; }
+  .q-text { font-size: 16px; line-height: 1.6; margin-bottom: 32px; white-space: pre-wrap; }
+  
+  .qc-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 32px; }
+  .qc-box { background: var(--bg2); border: 1px solid var(--border); padding: 20px; border-radius: var(--radius); }
+  .qc-label { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; }
+  .qc-val { font-weight: 500; font-size: 15px; }
+
+  .choices-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px; }
+  .choice-item {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 14px 20px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.1s;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  .choice-item:hover { border-color: var(--peach); }
+  .choice-item.selected { border-color: var(--peach); background: var(--peach-faint); border-width: 2px; padding: 13px 19px; }
+  .choice-item.correct { border-color: var(--sage); background: var(--sage-faint); }
+  .choice-item.incorrect { border-color: var(--peach); background: var(--peach-faint); }
+  .choice-letter { font-weight: 600; color: var(--peach); min-width: 20px; }
+
+  .numeric-input {
+    width: 200px;
+    padding: 12px 16px;
+    font-size: 18px;
+    font-family: var(--font-mono);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg);
+    color: var(--text);
+    margin-bottom: 32px;
+  }
+  .numeric-input:focus { outline: none; border-color: var(--peach); }
+
+  .explanation-box {
+    margin-top: 32px;
+    padding: 24px;
+    background: var(--bg2);
+    border-left: 4px solid var(--peach);
+    border-radius: 4px;
+    display: none;
+  }
+  .explanation-box h4 { font-family: var(--font-serif); margin-bottom: 8px; color: var(--clay); }
+  .explanation-text { font-size: 14px; line-height: 1.5; color: var(--text-mid); }
+
+  .actions { display: flex; gap: 16px; margin-top: 40px; }
+  .progress-bar-container { height: 6px; background: var(--bg3); border-radius: 3px; margin-top: 12px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; background: var(--peach); transition: width 0.3s; }
+
+  .timer-warn { color: #d9534f !important; animation: blink 1s infinite; }
+  @keyframes blink { 50% { opacity: 0.5; } }
+
   .theme-toggle-thumb {
     position: absolute;
     left: 4px;
@@ -884,6 +1059,11 @@
 </style>
 </head>
 <body>
+<div class="nav-bar">
+  <div class="nav-item active" id="nav-error-log" onclick="switchTab('error-log')">Error Log</div>
+  <div class="nav-item" id="nav-quant-practice" onclick="switchTab('quant-practice')">Quant Practice</div>
+</div>
+<div id="error-log-tab" class="tab-content active">
 
 <!-- HEADER -->
 <header class="header">
@@ -1029,6 +1209,31 @@
   </div>
   <div class="input-row-bottom">
     <button class="add-btn" onclick="addRow()">＋ Add Row</button>
+  </div>
+</div>
+
+</div> <!-- END error-log-tab -->
+
+<div id="quant-practice-tab" class="tab-content" style="display:none;">
+  <div class="practice-welcome" id="practice-welcome">
+    <h2>Quant Practice</h2>
+    <p>Master GRE Quantitative Reasoning with focused topic practice or timed simulations.</p>
+    <div class="mode-cards">
+      <div class="mode-card" onclick="QuantPractice.showTopicSelection()">
+        <div class="icon">📚</div>
+        <h3>Topic-wise Practice</h3>
+        <p>Focused, untimed practice on specific GRE quant topics. Learn at your own pace with detailed explanations.</p>
+      </div>
+      <div class="mode-card" onclick="QuantPractice.startMixedPractice()">
+        <div class="icon">⏱️</div>
+        <h3>Mixed Practice (Timed)</h3>
+        <p>35-minute simulation with a random mix of topics. Practice under real GRE time constraints.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="practice-screen" id="practice-screen" style="display:none;">
+    <!-- Question UI will be injected here -->
   </div>
 </div>
 
@@ -1389,6 +1594,303 @@ function exportCSV() {
   a.download = `gre_errors_${new Date().toISOString().slice(0,10)}.csv`;
   a.click();
 }
+
+function switchTab(tab) {
+  const tabs = ['error-log', 'quant-practice'];
+  tabs.forEach(t => {
+    document.getElementById(`${t}-tab`).style.display = t === tab ? 'block' : 'none';
+    const navItem = document.getElementById(`nav-${t}`);
+    if (navItem) navItem.classList.toggle('active', t === tab);
+  });
+
+  // Toggle visibility of error-log specific elements
+  const errorLogElements = [document.querySelector('.filter-bar'), document.querySelector('.input-row-wrapper')];
+  errorLogElements.forEach(el => {
+    if (el) el.style.display = tab === 'error-log' ? 'flex' : 'none';
+  });
+  
+  if (tab === 'quant-practice') {
+    QuantPractice.init();
+  }
+}
+
+// ── QUANT PRACTICE MODULE ──
+const QuantPractice = {
+  questions: [],
+  currentQuestions: [],
+  currentIndex: 0,
+  mode: null, // 'topic' or 'mixed'
+  timer: null,
+  timeLeft: 35 * 60,
+  userAnswers: {},
+  results: { correct: 0, incorrect: 0 },
+
+  async init() {
+    if (this.questions.length > 0) return;
+    try {
+      const resp = await fetch('gre_quant_questions.json');
+      const data = await resp.json();
+      this.questions = data.questions;
+    } catch (e) {
+      console.error('Failed to load questions', e);
+      document.getElementById('practice-container').innerHTML = '<p style="text-align:center; padding: 40px; color: var(--peach);">Error loading questions. Please ensure gre_quant_questions.json is present.</p>';
+    }
+  },
+
+  showTopicSelection() {
+    this.mode = 'topic';
+    const topics = [...new Set(this.questions.map(q => q.topic))].sort();
+    const screen = document.getElementById('practice-screen');
+    const welcome = document.getElementById('practice-welcome');
+    
+    welcome.style.display = 'none';
+    screen.style.display = 'block';
+    
+    screen.innerHTML = `
+      <div style="display:flex; align-items:center; gap:16px; margin-bottom:24px;">
+        <button class="btn" onclick="QuantPractice.exitPractice()">← Back</button>
+        <h2 style="font-family:var(--font-serif); font-size:24px;">Select a Topic</h2>
+      </div>
+      <div class="topic-grid">
+        ${topics.map(t => {
+          const count = this.questions.filter(q => q.topic === t).length;
+          return `
+            <div class="topic-card" onclick="QuantPractice.showTypeSelection('${t.replace(/'/g, "\\'")}')">
+              <span>${t}</span>
+              <span class="count">${count} Qs</span>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
+  },
+
+  showTypeSelection(topic) {
+    const questionsInTopic = this.questions.filter(q => q.topic === topic);
+    const types = [...new Set(questionsInTopic.map(q => q.question_type))];
+    const screen = document.getElementById('practice-screen');
+    
+    const typeLabels = {
+      'multiple_choice': 'Multiple Choice (MCQ)',
+      'quantitative_comparison': 'Quantitative Comparison',
+      'numeric_entry': 'Numeric Entry / Fill in Blank'
+    };
+
+    screen.innerHTML = `
+      <div style="display:flex; align-items:center; gap:16px; margin-bottom:24px;">
+        <button class="btn" onclick="QuantPractice.showTopicSelection()">← Back to Topics</button>
+        <div>
+          <div style="font-size:11px; text-transform:uppercase; color:var(--text-muted);">${topic}</div>
+          <h2 style="font-family:var(--font-serif); font-size:24px;">Select Question Type</h2>
+        </div>
+      </div>
+      <div class="topic-grid">
+        ${types.map(type => {
+          const count = questionsInTopic.filter(q => q.question_type === type).length;
+          return `
+            <div class="topic-card" onclick="QuantPractice.startTopicPractice('${topic.replace(/'/g, "\\'")}', '${type}')">
+              <span>${typeLabels[type] || type}</span>
+              <span class="count">${count} Qs</span>
+            </div>
+          `;
+        }).join('')}
+        <div class="topic-card" onclick="QuantPractice.startTopicPractice('${topic.replace(/'/g, "\\'")}', 'all')">
+          <span>All Types</span>
+          <span class="count">${questionsInTopic.length} Qs</span>
+        </div>
+      </div>
+    `;
+  },
+
+  startTopicPractice(topic, type) {
+    this.mode = 'topic';
+    this.currentQuestions = this.questions.filter(q => q.topic === topic && (type === 'all' || q.question_type === type));
+    this.currentIndex = 0;
+    this.userAnswers = {};
+    this.results = { correct: 0, incorrect: 0 };
+    this.renderQuestion();
+  },
+
+  startMixedPractice() {
+    this.mode = 'mixed';
+    this.userAnswers = {};
+    this.results = { correct: 0, incorrect: 0 };
+    this.currentIndex = 0;
+    
+    // GRE-like mix: 20 questions
+    // Shuffling all questions and picking 20
+    this.currentQuestions = [...this.questions]
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 20);
+    
+    document.getElementById('practice-timer').style.display = 'block';
+    this.startTimer();
+    this.renderQuestion();
+  },
+
+  startTimer() {
+    if (this.timer) clearInterval(this.timer);
+    this.timeLeft = 35 * 60;
+    const timerEl = document.getElementById('practice-timer');
+    
+    const update = () => {
+      const m = Math.floor(this.timeLeft / 60);
+      const s = this.timeLeft % 60;
+      timerEl.textContent = `${m}:${s.toString().padStart(2, '0')}`;
+      
+      if (this.timeLeft <= 300) timerEl.classList.add('timer-warn');
+      else timerEl.classList.remove('timer-warn');
+
+      if (this.timeLeft <= 0) {
+        clearInterval(this.timer);
+        this.submitTest();
+      }
+      this.timeLeft--;
+    };
+    
+    update();
+    this.timer = setInterval(update, 1000);
+  },
+
+  renderQuestion() {
+    const screen = document.getElementById('practice-screen');
+    const welcome = document.getElementById('practice-welcome');
+    welcome.style.display = 'none';
+    screen.style.display = 'block';
+
+    const q = this.currentQuestions[this.currentIndex];
+    const isSubmitted = this.userAnswers[this.currentIndex] !== undefined;
+    
+    let inputHtml = '';
+    if (q.question_type === 'multiple_choice' || q.question_type === 'quantitative_comparison') {
+      const choices = q.answer_choices || {};
+      inputHtml = `<div class="choices-list">
+        ${Object.entries(choices).map(([letter, text]) => {
+          if (!text && letter > 'B' && q.question_type === 'quantitative_comparison') return '';
+          let cls = 'choice-item';
+          if (isSubmitted) {
+            if (letter === q.correct_answer) cls += ' correct';
+            else if (letter === this.userAnswers[this.currentIndex]) cls += ' incorrect';
+          } else if (this.userAnswers[this.currentIndex] === letter) {
+            cls += ' selected';
+          }
+          return `<div class="${cls}" onclick="QuantPractice.selectAnswer('${letter}')">
+            <span class="choice-letter">${letter}</span>
+            <span>${text}</span>
+          </div>`;
+        }).join('')}
+      </div>`;
+    } else if (q.question_type === 'numeric_entry') {
+      inputHtml = `
+        <input type="text" class="numeric-input" id="q-numeric-inp" 
+               placeholder="Enter number..." 
+               value="${this.userAnswers[this.currentIndex] || ''}"
+               ${isSubmitted ? 'disabled' : ''}
+               onchange="QuantPractice.userAnswers[${this.currentIndex}] = this.value">
+      `;
+    }
+
+    screen.innerHTML = `
+      <div class="q-header">
+        <div class="q-meta">${q.topic} · Question ${this.currentIndex + 1} of ${this.currentQuestions.length}</div>
+        <button class="btn btn-ghost" onclick="QuantPractice.exitPractice()">Exit</button>
+      </div>
+      
+      <div class="question-container">
+        <div class="q-text">${q.question_text || q.raw_text.split('\n(A)')[0]}</div>
+        
+        ${q.question_type === 'quantitative_comparison' ? `
+          <div class="qc-container">
+            <div class="qc-box"><div class="qc-label">Quantity A</div><div class="qc-val">${q.quantity_a}</div></div>
+            <div class="qc-box"><div class="qc-label">Quantity B</div><div class="qc-val">${q.quantity_b}</div></div>
+          </div>
+        ` : ''}
+
+        ${inputHtml}
+
+        <div class="explanation-box" id="explanation-box" style="${isSubmitted ? 'display:block' : ''}">
+          <h4>Explanation</h4>
+          <div class="explanation-text">
+            ${q.explanation || 'Detailed explanation not available in the dataset for this question. Practice the concept by reviewing the topic rules.'}
+            ${q.correct_answer ? `<p style="margin-top:12px;"><strong>Correct Answer: ${q.correct_answer}</strong></p>` : ''}
+          </div>
+        </div>
+
+        <div class="progress-bar-container">
+          <div class="progress-bar-fill" style="width: ${((this.currentIndex + 1) / this.currentQuestions.length) * 100}%"></div>
+        </div>
+
+        <div class="actions">
+          ${this.currentIndex > 0 ? `<button class="btn" onclick="QuantPractice.prevQ()">Previous</button>` : ''}
+          ${!isSubmitted ? `<button class="btn btn-primary" onclick="QuantPractice.submitAnswer()">Submit Answer</button>` : ''}
+          ${isSubmitted && this.currentIndex < this.currentQuestions.length - 1 ? `<button class="btn btn-primary" onclick="QuantPractice.nextQ()">Next Question</button>` : ''}
+          ${isSubmitted && this.currentIndex === this.currentQuestions.length - 1 ? `<button class="btn btn-primary" onclick="QuantPractice.showResults()">Finish</button>` : ''}
+        </div>
+      </div>
+    `;
+  },
+
+  selectAnswer(letter) {
+    if (this.userAnswers[this.currentIndex] !== undefined && this.mode === 'topic') return;
+    this.userAnswers[this.currentIndex] = letter;
+    this.renderQuestion();
+  },
+
+  submitAnswer() {
+    const ans = this.userAnswers[this.currentIndex];
+    if (ans === undefined) {
+      alert('Please select or enter an answer.');
+      return;
+    }
+    
+    // Note: Since correct_answer is missing in JSON, we can't truly validate.
+    // For this prototype, we'll mark it as submitted and show the explanation box.
+    // In a real app, you'd compare with q.correct_answer.
+    
+    this.renderQuestion();
+    document.getElementById('explanation-box').style.display = 'block';
+  },
+
+  nextQ() {
+    if (this.currentIndex < this.currentQuestions.length - 1) {
+      this.currentIndex++;
+      this.renderQuestion();
+    }
+  },
+
+  prevQ() {
+    if (this.currentIndex > 0) {
+      this.currentIndex--;
+      this.renderQuestion();
+    }
+  },
+
+  showResults() {
+    clearInterval(this.timer);
+    document.getElementById('practice-timer').style.display = 'none';
+    const screen = document.getElementById('practice-screen');
+    
+    screen.innerHTML = `
+      <div class="practice-welcome">
+        <h2>Practice Session Complete!</h2>
+        <p>You've completed ${this.currentQuestions.length} questions in ${this.mode === 'mixed' ? 'Mixed' : 'Topic-wise'} mode.</p>
+        <div style="margin: 32px 0; font-size: 20px;">
+           Mode: <strong>${this.mode === 'mixed' ? 'Timed' : 'Untimed'}</strong>
+        </div>
+        <button class="btn btn-primary" onclick="QuantPractice.exitPractice()">Return to Practice Home</button>
+      </div>
+    `;
+  },
+
+  exitPractice() {
+    clearInterval(this.timer);
+    document.getElementById('practice-timer').style.display = 'none';
+    document.getElementById('practice-screen').style.display = 'none';
+    document.getElementById('practice-welcome').style.display = 'block';
+    this.currentIndex = 0;
+    this.currentQuestions = [];
+  }
+};
 
 // ── THEME LOGIC ──
 function initTheme() {

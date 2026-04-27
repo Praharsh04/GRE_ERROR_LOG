@@ -1,0 +1,17 @@
+Starred,#,Topic,Subtopic,Q#,Error Type,What I Did,What I Should Have Done,Root Cause,Review
+N,1,"Arithmetic","PEMDAS","5","Silly Mistake","I didn't considered the PEMDAS rules","Applied PEMDAS to Solve the same","","Not Reviewed"
+N,2,"Arithmetic","","9","Silly Mistake","Hurried solving","Should have took a single approach and carefully added everything without changing signs and then solved  with a clear picture","time contrain","Not Reviewed"
+N,3,"Arithmetic","Integers & Basic Operations","10","Misread","Presumed things","Should have translated the word problem in mathematical terms","-","Not Reviewed"
+N,4,"Arithmetic","Ratios","13","Other","I took the obvious scenario and solved the quetion","I should have looked for multiple perspective and then come to a certain conclusion","negligence","Not Reviewed"
+N,5,"Arithmetic","Place Value","14","Concept Gap","I lacked the knowledge for tens and teth;s","i should have took the ten's  tenths digit the imidiate digit after the decimal and added them togetherthe second digit from the right and t","","Not Reviewed"
+N,6,"Arithmetic","Counting with inclusive endpoints (date-based counting)","15","Concept Gap","I considered the years as whole","I missed the leap year concept","confution","Not Reviewed"
+N,7,"Arithmetic","Ratios","17","Silly Mistake","used ratios instead of direct calculation","Should have translated the question asthmatically and added solved accordingly","overstipulation","Not Reviewed"
+N,8,"Arithmetic","Averages","22
+","Silly Mistake","Did a caclulation mistake","should have translated the quetion properly asthmatically","hurry","Not Reviewed"
+N,9,"Arithmetic","Fractions & Decimals","27","Silly Mistake","I forgot the count of zeros in trillion","Should have approzed each and sidewise writen the 10 to the powers while dividing the numbers","Silly mistake","Not Reviewed"
+N,10,"Algebra","Systems of Equations","17","Silly Mistake","Didn't solved it properly","Do every solving step wise","complexity","Not Reviewed"
+N,11,"Algebra","","19","Concept Gap","So, i presumed that non negative integers might start from 1","whereas there was a possible scanario of k being zero therefore there where 2 possible scenario  there fore the answer was D","","Not Reviewed"
+N,12,"Algebra","Systems of Equations","25","Concept Gap","I considered the formula for x2 - y2 but I didn't apply it well and got confused all along","Should have applied the formula structurally to eliminate quantities and it was pretty simple","","Not Reviewed"
+N,13,"Algebra","Systems of Equations","26","Silly Mistake","I first simplified the equation and then added the numbers","I should have used the plug in strategy to first check the possible scenarios","Strategical mistake","Not Reviewed"
+Y,14,"Algebra","Algebraic Expressions","27","Concept Gap","So I just did the first step righ but substituted the equation in a wrong format","so i should have used the x2 + y2 value to be directly added to the derived equation fro the first one when square this would give me 2xy = -3","Wrong substitution","Not Reviewed"
+Y,15,"Algebra","Algebraic Expressions","29","Concept Gap","i directly jumped in with substitution","I shouldhave used the formula for (x-y)2 = x2 - 2xy + y2 and then substitute the given values in this formula","Unable to recognize the pattern","Not Reviewed"
