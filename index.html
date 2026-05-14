@@ -6,6 +6,16 @@
 <title>GRE Quant · Error Log</title>
 <link rel="icon" type="image/png" href="logo.png">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<!-- KaTeX -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+
+<!-- PDF.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+</script>
 <style>
   :root {
     --bg:          #faf8f5;
@@ -196,6 +206,39 @@
     border-color: var(--peach-light);
     background: var(--bg2);
   }
+
+  .theme-toggle-thumb {
+    position: absolute;
+    left: 4px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: white;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s;
+    z-index: 2;
+  }
+  [data-theme="dark"] .theme-toggle-thumb {
+    transform: translateX(30px);
+    background: var(--peach);
+  }
+  .theme-toggle-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    z-index: 1;
+    color: var(--text-faint);
+    transition: color 0.3s;
+  }
+  .theme-toggle-icon svg {
+    width: 14px;
+    height: 14px;
+  }
+  [data-theme="light"] .theme-toggle-icon.sun { color: var(--amber); }
+  [data-theme="dark"] .theme-toggle-icon.moon { color: white; }
+
   /* ── NAVIGATION BAR ── */
   .nav-bar {
     background: var(--surface);
@@ -316,92 +359,8 @@
   }
   .q-meta { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); text-transform: uppercase; }
   .q-text { font-size: 16px; line-height: 1.6; margin-bottom: 32px; white-space: pre-wrap; }
-  
-  .qc-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 32px; }
-  .qc-box { background: var(--bg2); border: 1px solid var(--border); padding: 20px; border-radius: var(--radius); }
-  .qc-label { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; }
-  .qc-val { font-weight: 500; font-size: 15px; }
-
-  .choices-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px; }
-  .choice-item {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    padding: 14px 20px;
-    border-radius: var(--radius);
-    cursor: pointer;
-    transition: all 0.1s;
-    display: flex;
-    gap: 12px;
-    align-items: center;
-  }
-  .choice-item:hover { border-color: var(--peach); }
-  .choice-item.selected { border-color: var(--peach); background: var(--peach-faint); border-width: 2px; padding: 13px 19px; }
-  .choice-item.correct { border-color: var(--sage); background: var(--sage-faint); }
-  .choice-item.incorrect { border-color: var(--peach); background: var(--peach-faint); }
-  .choice-letter { font-weight: 600; color: var(--peach); min-width: 20px; }
-
-  .numeric-input {
-    width: 200px;
-    padding: 12px 16px;
-    font-size: 18px;
-    font-family: var(--font-mono);
-    border: 2px solid var(--border);
-    border-radius: var(--radius);
-    background: var(--bg);
-    color: var(--text);
-    margin-bottom: 32px;
-  }
-  .numeric-input:focus { outline: none; border-color: var(--peach); }
-
-  .explanation-box {
-    margin-top: 32px;
-    padding: 24px;
-    background: var(--bg2);
-    border-left: 4px solid var(--peach);
-    border-radius: 4px;
-    display: none;
-  }
-  .explanation-box h4 { font-family: var(--font-serif); margin-bottom: 8px; color: var(--clay); }
-  .explanation-text { font-size: 14px; line-height: 1.5; color: var(--text-mid); }
 
   .actions { display: flex; gap: 16px; margin-top: 40px; }
-  .progress-bar-container { height: 6px; background: var(--bg3); border-radius: 3px; margin-top: 12px; overflow: hidden; }
-  .progress-bar-fill { height: 100%; background: var(--peach); transition: width 0.3s; }
-
-  .timer-warn { color: #d9534f !important; animation: blink 1s infinite; }
-  @keyframes blink { 50% { opacity: 0.5; } }
-
-  .theme-toggle-thumb {
-    position: absolute;
-    left: 4px;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background: white;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s;
-    z-index: 2;
-  }
-  [data-theme="dark"] .theme-toggle-thumb {
-    transform: translateX(30px);
-    background: var(--peach);
-  }
-  .theme-toggle-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 24px;
-    height: 24px;
-    z-index: 1;
-    color: var(--text-faint);
-    transition: color 0.3s;
-  }
-  .theme-toggle-icon svg {
-    width: 14px;
-    height: 14px;
-  }
-  [data-theme="light"] .theme-toggle-icon.sun { color: var(--amber); }
-  [data-theme="dark"] .theme-toggle-icon.moon { color: white; }
 
   /* ── FILTER BAR ── */
   .filter-bar {
@@ -563,7 +522,7 @@
     display: block;
     width: 100%;
     height: 100%;
-    padding: 8px 10px;
+    padding: 8px 4px;
     background: transparent;
     border: none;
     color: var(--text);
@@ -589,7 +548,7 @@
   .cell-select {
     width: 100%;
     height: 100%;
-    padding: 0 10px;
+    padding: 0 4px;
     background: transparent;
     border: none;
     color: var(--text);
@@ -711,68 +670,71 @@
     background: var(--surface);
     border-top: 2px solid var(--peach-light);
     box-shadow: 0 -8px 40px rgba(0,0,0,0.12);
+    display: flex;
+    flex-direction: column;
   }
 
   .input-row-top {
-    padding: 7px 32px 4px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 12px;
+    width: 100%;
+    box-sizing: border-box;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .input-row-eyebrow {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-weight: 600;
+  }
+
+  .shortcut-hint {
+    font-size: 11px;
+    color: var(--text-faint);
+    font-family: var(--font-mono);
     display: flex;
     align-items: center;
     gap: 12px;
+    white-space: nowrap;
   }
-  .input-row-eyebrow {
-    font-size: 9.5px;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: var(--peach);
-    font-family: var(--font-mono);
-    font-weight: 400;
-  }
-  .shortcut-hint {
-    font-size: 10.5px;
-    color: var(--text-faint);
-    font-family: var(--font-mono);
-    margin-left: auto;
-  }
+
   .shortcut-hint kbd {
     background: var(--bg2);
     border: 1px solid var(--border-dark);
     border-radius: 4px;
-    padding: 1px 6px;
+    padding: 1px 4px;
     font-family: var(--font-mono);
-    font-size: 10px;
+    font-size: 9px;
     color: var(--text-mid);
   }
 
   .input-row-fields {
     display: flex;
+    flex-direction: row;
     align-items: center;
-    gap: 0;
-    min-width: 1120px;
-    border-top: 1px solid var(--border);
+    width: 100%;
+    box-sizing: border-box;
+    padding: 4px 0;
     overflow-x: auto;
-    background: var(--bg2);
   }
 
   .inp-cell {
     flex: 1;
     min-width: 0;
     border-right: 1px solid var(--border);
-    height: 44px;
+    height: 36px;
     display: flex;
     align-items: center;
     background: transparent;
     transition: background 0.12s;
   }
   .inp-cell:focus-within { background: rgba(232,132,106,0.05); }
-  .inp-cell.c-topic-inp    { flex: 0 0 140px; }
-  .inp-cell.c-subtopic-inp { flex: 0 0 140px; }
-  .inp-cell.c-qnum-inp     { flex: 0 0 60px; }
-  .inp-cell.c-etype-inp    { flex: 0 0 120px; }
-  .inp-cell.c-did-inp      { flex: 0 0 160px; }
-  .inp-cell.c-should-inp   { flex: 0 0 160px; }
-  .inp-cell.c-root-inp     { flex: 0 0 140px; }
-  .inp-cell.c-rev-inp      { flex: 0 0 90px; }
-  .inp-cell.c-img-inp      { flex: 0 0 70px; border-right: none; }
 
   .inp-field {
     width: 100%;
@@ -782,8 +744,8 @@
     outline: none;
     color: var(--text);
     font-family: var(--font-sans);
-    font-size: 12.5px;
-    padding: 0 10px;
+    font-size: 12px;
+    padding: 0 4px;
   }
   .inp-field::placeholder { color: var(--text-faint); }
 
@@ -796,7 +758,7 @@
     color: var(--text);
     font-family: var(--font-sans);
     font-size: 12.5px;
-    padding: 0 10px;
+    padding: 0 4px;
     appearance: none;
     cursor: pointer;
   }
@@ -825,36 +787,153 @@
     display: none;
   }
 
-  .input-row-bottom {
-    padding: 7px 32px 10px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: var(--surface);
-  }
-
   .add-btn {
+    flex-shrink: 0;
+    margin-left: auto;
+    width: auto;
     background: linear-gradient(135deg, var(--peach) 0%, var(--clay) 100%);
     color: white;
     border: none;
-    border-radius: var(--radius);
+    border-radius: 6px;
     font-family: var(--font-sans);
-    font-size: 12.5px;
-    font-weight: 600;
-    padding: 8px 20px;
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 0 16px;
+    height: 36px;
     cursor: pointer;
     transition: all 0.15s;
     display: flex;
     align-items: center;
-    gap: 6px;
-    box-shadow: 0 2px 10px rgba(232,132,106,0.35);
-    letter-spacing: 0.1px;
+    justify-content: center;
+    gap: 4px;
+    box-shadow: 0 2px 8px rgba(232,132,106,0.3);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
   .add-btn:hover { box-shadow: 0 4px 16px rgba(232,132,106,0.45); transform: translateY(-1px); }
   .add-btn:active { transform: translateY(0); }
 
-  /* ── EMPTY STATE ── */
-  .empty-state {
+  /* ── FLASHCARDS SECTION ── */
+  .flashcard-container {
+  max-width: 700px;
+  margin: 40px auto;
+  perspective: 1000px;
+  padding: 0 24px;
+  }
+  .flashcard {
+  position: relative;
+  width: 100%;
+  height: 420px;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  }
+  .flashcard.flipped { transform: rotateY(180deg); }
+  .flashcard-front, .flashcard-back {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  padding: 32px;
+  overflow: hidden;
+  }
+  .flashcard-back { transform: rotateY(180deg); }
+
+  .flashcard-img-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #fff;
+  border-radius: 4px;
+  margin-top: 16px;
+  }
+  .flashcard-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  }
+
+  .flashcard-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 32px;
+  }
+  .flashcard-controls .btn { padding: 10px 20px; font-size: 14px; }
+
+  .flashcard-progress {
+  max-width: 700px;
+  margin: 20px auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-muted);
+  }
+  .progress-bar-bg { flex: 1; height: 6px; background: var(--bg3); border-radius: 3px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; background: var(--peach); transition: width 0.3s; }
+
+  .topic-filter-chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+  justify-content: center;
+  }
+  .chip {
+  padding: 6px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--text-mid);
+  }
+  .chip:hover { border-color: var(--peach); color: var(--peach); }
+  .chip.active { background: var(--peach); color: white; border-color: var(--peach); }
+
+  .difficulty-tag {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  font-weight: 600;
+  }
+  .diff-easy { background: var(--sage-faint); color: var(--sage); }
+  .diff-medium { background: var(--amber-faint); color: var(--amber); }
+  .diff-hard { background: var(--peach-faint); color: var(--peach); }
+
+  .master-btn {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  opacity: 0.3;
+  transition: opacity 0.2s;
+  }
+  .master-btn.active { opacity: 1; }
+
+  /* ── EMPTY STATE ── */  .empty-state {
     text-align: center;
     padding: 72px 20px;
     color: var(--text-muted);
@@ -1023,9 +1102,6 @@
     .input-row-wrapper {
       padding-bottom: env(safe-area-inset-bottom);
     }
-    .input-row-top {
-      padding: 8px 16px;
-    }
     .shortcut-hint { display: none; }
     
     .input-row-fields {
@@ -1056,12 +1132,111 @@
       padding: 12px;
     }
   }
+
+  /* ── CHEAT SHEETS SECTION ── */
+  .cheat-sheets-container {
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 0 24px;
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 150px);
+  }
+  .pdf-toolbar {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-bottom: none;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    z-index: 10;
+  }
+  .pdf-viewer-container {
+    flex: 1;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    overflow-y: auto;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0;
+    scroll-behavior: smooth;
+  }
+  .pdf-page-wrapper {
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+    background: white;
+    position: relative;
+    transition: transform 0.2s;
+  }
+  .pdf-canvas {
+    display: block;
+    max-width: 100%;
+    height: auto !important;
+  }
+  .pdf-loading-skeleton {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, var(--bg2) 25%, var(--bg3) 50%, var(--bg2) 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+    border-radius: 4px;
+  }
+  @keyframes skeleton-loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+  .pdf-controls-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .pdf-page-info {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-mid);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .pdf-zoom-input {
+    width: 45px;
+    padding: 4px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 12px;
+    text-align: center;
+    background: var(--surface);
+    color: var(--text);
+    outline: none;
+  }
+  .pdf-zoom-input:focus { border-color: var(--peach); }
+  
+  @media (max-width: 768px) {
+    .cheat-sheets-container {
+      height: calc(100vh - 100px);
+      padding: 0 12px;
+      margin: 10px auto;
+    }
+    .pdf-toolbar {
+      padding: 8px 12px;
+      gap: 8px;
+    }
+    .pdf-page-info span { display: none; }
+  }
 </style>
 </head>
 <body>
 <div class="nav-bar">
   <div class="nav-item active" id="nav-error-log" onclick="switchTab('error-log')">Error Log</div>
   <div class="nav-item" id="nav-quant-practice" onclick="switchTab('quant-practice')">Quant Practice</div>
+  <div class="nav-item" id="nav-quant-flashcards" onclick="switchTab('quant-flashcards')">Quant Flashcards</div>
+  <div class="nav-item" id="nav-quant-cheat-sheets" onclick="switchTab('quant-cheat-sheets')">Cheat Sheets</div>
 </div>
 <div id="error-log-tab" class="tab-content active">
 
@@ -1070,7 +1245,7 @@
   <div class="logo-mark"><img src="logo.png" alt="Q"></div>
   <div>
     <div class="header-title">GRE <em>Quant</em> · Error Log</div>
-    <div class="header-sub">Local · No backend · Auto-saved</div>
+    <div class="header-sub">Cloud Persistent · Supabase</div>
   </div>
   <div class="header-stats">
     <div class="stat-chip">Total <strong id="stat-total">0</strong></div>
@@ -1086,7 +1261,7 @@
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
     </div>
   </div>
-  <button class="btn btn-primary" onclick="exportCSV()" style="margin-left:4px;">↓ Export CSV</button>
+  <button id="sync-btn" class="btn" style="display:none; background: var(--amber-faint); border-color: var(--amber); color: var(--amber); margin-left: 4px;" onclick="syncLocalToCloud()">☁ Sync Local to Cloud</button>
 </header>
 
 <!-- FILTER BAR -->
@@ -1160,8 +1335,13 @@
 <div class="input-row-wrapper">
   <div class="input-row-top">
     <span class="input-row-eyebrow">+ New entry</span>
-    <span class="shortcut-hint"><kbd>Enter</kbd> to add · <kbd>Tab</kbd> to move · <kbd>Ctrl+V</kbd> to paste img</span>
+    <div class="shortcut-hint">
+      <span><kbd>Enter</kbd> to add</span>
+      <span><kbd>Tab</kbd> to move</span>
+      <span><kbd>Ctrl+V</kbd> to paste img</span>
+    </div>
   </div>
+
   <div class="input-row-fields">
     <div class="inp-cell c-topic-inp">
       <select class="inp-select" id="inp-topic" tabindex="1"></select>
@@ -1206,13 +1386,54 @@
         <input type="file" id="inp-img-file" accept="image/*" onchange="handleInpImage(this)">
       </label>
     </div>
-  </div>
-  <div class="input-row-bottom">
-    <button class="add-btn" onclick="addRow()">＋ Add Row</button>
+    
+    <button class="add-btn" onclick="addRow()" style="margin-left: auto; width: auto; padding: 0 16px; height: 36px; flex-shrink: 0;">＋ Add Row</button>
   </div>
 </div>
 
 </div> <!-- END error-log-tab -->
+
+<div id="quant-flashcards-tab" class="tab-content" style="display:none;">
+  <div class="practice-welcome">
+    <h2 style="margin-bottom: 24px;">Quant Flashcards</h2>
+    <div class="topic-filter-chips" id="fc-topic-filters">
+      <!-- Topic chips will be injected here -->
+    </div>
+    <div class="flashcard-progress">
+      <span>Progress</span>
+      <div class="progress-bar-bg"><div class="progress-bar-fill" id="fc-progress-fill" style="width: 0%;"></div></div>
+      <span id="fc-progress-text">0/0</span>
+    </div>
+    
+    <div class="flashcard-container" id="fc-main-container">
+      <div class="flashcard" id="fc-card" onclick="QuantFlashcards.flip()">
+        <div class="flashcard-front">
+          <div class="q-meta" id="fc-front-topic">TOPIC</div>
+          <div style="flex:1; display:flex; align-items:center; justify-content:center; text-align:center; font-family:var(--font-serif); font-size:24px;" id="fc-front-title">
+            Flashcard Title
+          </div>
+          <div style="font-size:12px; color:var(--text-muted); text-align:center;">Click to reveal content</div>
+        </div>
+        <div class="flashcard-back">
+          <div class="q-meta" id="fc-back-topic">TOPIC</div>
+          <div class="flashcard-img-wrapper">
+            <img src="" alt="Flashcard Content" class="flashcard-img" id="fc-back-img" loading="lazy">
+          </div>
+          <button class="master-btn" id="fc-master-btn" onclick="QuantFlashcards.toggleMastery(event)">★</button>
+        </div>
+      </div>
+
+      <div class="flashcard-controls">
+        <button class="btn" onclick="QuantFlashcards.prev()">← Prev</button>
+        <button class="btn" onclick="QuantFlashcards.shuffle()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><path d="M2 18h1.4c1.3 0 2.5-.6 3.3-1.7l6.1-8.6c.7-1.1 2-1.7 3.3-1.7H22"/><path d="m18 2 4 4-4 4"/><path d="M2 6h1.9c1.5 0 2.9.9 3.6 2.2"/><path d="M22 18h-5.9c-1.3 0-2.6-.7-3.3-1.8l-.5-.8"/><path d="m18 14 4 4-4 4"/></svg>
+          Shuffle
+        </button>
+        <button class="btn" onclick="QuantFlashcards.next()">Next →</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div id="quant-practice-tab" class="tab-content" style="display:none;">
   <div class="practice-welcome" id="practice-welcome">
@@ -1237,13 +1458,52 @@
   </div>
 </div>
 
+<div id="quant-cheat-sheets-tab" class="tab-content" style="display:none;">
+  <div class="cheat-sheets-container">
+    <div class="pdf-toolbar">
+      <div class="pdf-controls-group">
+        <button class="btn" onclick="QuantCheatSheets.prevPage()">←</button>
+        <div class="pdf-page-info">
+          <span>Page</span> <input type="number" id="pdf-current-page" class="pdf-zoom-input" value="1" min="1" onchange="QuantCheatSheets.goToPage(this.value)"> 
+          <span>of</span> <span id="pdf-total-pages">-</span>
+        </div>
+        <button class="btn" onclick="QuantCheatSheets.nextPage()">→</button>
+      </div>
+      
+      <div style="flex: 1;"></div>
+      
+      <div class="pdf-controls-group">
+        <button class="btn" onclick="QuantCheatSheets.zoomOut()">－</button>
+        <span class="pdf-page-info" id="pdf-zoom-level">150%</span>
+        <button class="btn" onclick="QuantCheatSheets.zoomIn()">＋</button>
+        <button class="btn" onclick="QuantCheatSheets.fitToWidth()">Fit Width</button>
+      </div>
+      
+      <div class="pdf-controls-group">
+        <button class="btn" onclick="QuantCheatSheets.toggleFullscreen()" title="Fullscreen">⛶</button>
+      </div>
+    </div>
+    <div class="pdf-viewer-container" id="pdf-viewer">
+      <!-- PDF pages will be rendered here -->
+    </div>
+  </div>
+</div>
+
 <!-- MODAL -->
 <div class="modal-overlay" id="img-modal" onclick="closeModal(event)">
   <div class="modal-close" onclick="closeModal()">✕</div>
   <img class="modal-img" id="modal-img-el" src="" alt="Question Image">
 </div>
 
+<!-- Supabase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
+// ── SUPABASE CONFIG ──
+const SUPABASE_URL = 'https://lfxpoxxwvhkkllywikuk.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxmeHBveHh3dmhra2x5d3lpa3VrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2NDA5NDQsImV4cCI6MjA5MzIxNjk0NH0.0gG0_wXaPsOScR4w2BdQ3DXUWOKe17d_8VYpPdTaKBo';
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
 // 🔹 Topic → Subtopic Mapping (Provided by User)
 const topicSubtopics = {
   "Arithmetic": [
@@ -1353,8 +1613,53 @@ let rows = [];
 let inpImage = null;
 let showStarredOnly = false;
 
-function save() { try { localStorage.setItem('gre_errors_v3', JSON.stringify(rows)); } catch(e) {} }
-function load() { try { const d = localStorage.getItem('gre_errors_v3'); if(d) rows = JSON.parse(d); } catch(e) { rows=[]; } }
+// ── DATA PERSISTENCE (SUPABASE) ──
+
+async function load() {
+  const { data, error } = await supabaseClient
+    .from('errors')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error loading data:', error);
+    return;
+  }
+  rows = data;
+  renderTable();
+  checkSyncButton();
+}
+
+function checkSyncButton() {
+  const localData = localStorage.getItem('gre_errors_v3');
+  if (localData) {
+    const localRows = JSON.parse(localData);
+    if (localRows.length > 0) {
+      document.getElementById('sync-btn').style.display = 'block';
+    }
+  }
+}
+
+async function syncLocalToCloud() {
+  const localData = localStorage.getItem('gre_errors_v3');
+  if (!localData) return;
+  const localRows = JSON.parse(localData).map(r => {
+    const { id, ...rest } = r; // Strip local IDs
+    return rest;
+  });
+
+  if (confirm(`Sync ${localRows.length} local entries to the cloud?`)) {
+    const { error } = await supabaseClient.from('errors').insert(localRows);
+    if (error) {
+      alert('Error syncing data: ' + error.message);
+    } else {
+      localStorage.removeItem('gre_errors_v3');
+      document.getElementById('sync-btn').style.display = 'none';
+      alert('Sync successful! Your data is now in the cloud.');
+      load();
+    }
+  }
+}
 
 function getFiltered() {
   const ft = document.getElementById('filter-topic').value;
@@ -1390,49 +1695,73 @@ function renderTable() {
   document.getElementById('empty-state').style.display = 'none';
 
   tbody.innerHTML = filtered.map((row, fi) => {
-    const gi = rows.indexOf(row);
     const ec = ETYPE_CLASS[row.etype] || 'etype-other';
     const isStarred = row.starred ? true : false;
     
     return `<tr class="${isStarred ? 'starred-row' : ''}">
-      <td class="star-cell ${isStarred ? 'starred' : 'unstarred'}" onclick="toggleStar(${gi})">
+      <td class="star-cell ${isStarred ? 'starred' : 'unstarred'}" onclick="toggleStar('${row.id}')">
         ${isStarred ? '★' : '☆'}
       </td>
       <td class="row-num" data-label="#">${fi+1}</td>
-      <td data-label="Topic"><textarea class="cell-text topic-text" rows="1" onblur="updateField(${gi},'topic',this.value)">${escH(row.topic)}</textarea></td>
-      <td data-label="Subtopic"><textarea class="cell-text" rows="1" onblur="updateField(${gi},'subtopic',this.value)">${escH(row.subtopic)}</textarea></td>
-      <td data-label="Q#"><textarea class="cell-text" rows="1" onblur="updateField(${gi},'qnum',this.value)">${escH(row.qnum)}</textarea></td>
+      <td data-label="Topic"><textarea class="cell-text topic-text" rows="1" onblur="updateField('${row.id}','topic',this.value)">${escH(row.topic)}</textarea></td>
+      <td data-label="Subtopic"><textarea class="cell-text" rows="1" onblur="updateField('${row.id}','subtopic',this.value)">${escH(row.subtopic)}</textarea></td>
+      <td data-label="Q#"><textarea class="cell-text" rows="1" onblur="updateField('${row.id}','qnum',this.value)">${escH(row.qnum)}</textarea></td>
       <td data-label="Error Type">
-        <select class="cell-select ${ec}" onchange="updateField(${gi},'etype',this.value)">
+        <select class="cell-select ${ec}" onchange="updateField('${row.id}','etype',this.value)">
           <option value="">—</option>
           ${ERROR_TYPES.map(t=>`<option value="${t}" ${row.etype===t?'selected':''}>${t}</option>`).join('')}
         </select>
       </td>
-      <td data-label="What I Did"><textarea class="cell-text" rows="1" onblur="updateField(${gi},'did',this.value)">${escH(row.did)}</textarea></td>
-      <td data-label="What I Should've Done"><textarea class="cell-text" rows="1" onblur="updateField(${gi},'should',this.value)">${escH(row.should)}</textarea></td>
-      <td data-label="Root Cause"><textarea class="cell-text" rows="1" onblur="updateField(${gi},'root',this.value)">${escH(row.root)}</textarea></td>
+      <td data-label="What I Did"><textarea class="cell-text" rows="1" onblur="updateField('${row.id}','did',this.value)">${escH(row.did)}</textarea></td>
+      <td data-label="What I Should've Done"><textarea class="cell-text" rows="1" onblur="updateField('${row.id}','should',this.value)">${escH(row.should)}</textarea></td>
+      <td data-label="Root Cause"><textarea class="cell-text" rows="1" onblur="updateField('${row.id}','root',this.value)">${escH(row.root)}</textarea></td>
       <td data-label="Review">
-        <div class="review-pill ${row.review==='Reviewed'?'reviewed':'not-reviewed'}" onclick="toggleReview(${gi})">
+        <div class="review-pill ${row.review==='Reviewed'?'reviewed':'not-reviewed'}" onclick="toggleReview('${row.id}')">
           ${row.review==='Reviewed'?'✓ Done':'✗ Pending'}
         </div>
       </td>
       <td data-label="Image" style="text-align:center;">
         ${row.image
-          ? `<img class="img-thumb" src="${row.image}" onclick="openModal(${gi})" alt="img">`
-          : `<label class="img-upload-btn" title="Upload image">📎<input type="file" accept="image/*" onchange="handleInpImage(this)"></label>`
+          ? `<img class="img-thumb" src="${row.image}" onclick="openModal(${fi})" alt="img">`
+          : `<label class="img-upload-btn" title="Upload image">📎<input type="file" accept="image/*" onchange="uploadRowImage('${row.id}',this)"></label>`
         }
       </td>
-      <td><button class="del-btn" onclick="deleteRow(${gi})">✕</button></td>
+      <td><button class="del-btn" onclick="deleteRow('${row.id}')">✕</button></td>
     </tr>`;
   }).join('');
 }
 
-function updateField(i, field, val) { rows[i][field]=val; save(); }
+async function updateField(id, field, val) {
+  const row = rows.find(r => r.id == id);
+  if (!row || row[field] === val) return;
+  
+  const { error } = await supabaseClient
+    .from('errors')
+    .update({ [field]: val })
+    .eq('id', id);
 
-function toggleStar(i) {
-  rows[i].starred = !rows[i].starred;
-  save();
-  renderTable();
+  if (error) console.error('Update error:', error);
+  else {
+    row[field] = val;
+    renderTable();
+  }
+}
+
+async function toggleStar(id) {
+  const row = rows.find(r => r.id == id);
+  if (!row) return;
+  
+  const newState = !row.starred;
+  const { error } = await supabaseClient
+    .from('errors')
+    .update({ starred: newState })
+    .eq('id', id);
+
+  if (error) console.error('Star error:', error);
+  else {
+    row.starred = newState;
+    renderTable();
+  }
 }
 
 function toggleStarredFilter() {
@@ -1443,23 +1772,64 @@ function toggleStarredFilter() {
   renderTable();
 }
 
-function toggleReview(i) { rows[i].review = rows[i].review==='Reviewed'?'Not Reviewed':'Reviewed'; save(); renderTable(); }
-function deleteRow(i) { rows.splice(i,1); save(); renderTable(); }
-function uploadRowImage(i, input) {
+async function toggleReview(id) {
+  const row = rows.find(r => r.id == id);
+  if (!row) return;
+  
+  const nextReview = row.review==='Reviewed'?'Not Reviewed':'Reviewed';
+  const { error } = await supabaseClient
+    .from('errors')
+    .update({ review: nextReview })
+    .eq('id', id);
+
+  if (error) console.error('Review error:', error);
+  else {
+    row.review = nextReview;
+    renderTable();
+  }
+}
+
+async function deleteRow(id) {
+  if (!confirm('Are you sure you want to delete this entry?')) return;
+  const { error } = await supabaseClient
+    .from('errors')
+    .delete()
+    .eq('id', id);
+
+  if (error) console.error('Delete error:', error);
+  else {
+    rows = rows.filter(r => r.id != id);
+    renderTable();
+  }
+}
+
+async function uploadRowImage(id, input) {
   const f = input.files[0]; if(!f) return;
   const r = new FileReader();
-  r.onload = e => { rows[i].image = e.target.result; save(); renderTable(); };
+  r.onload = async e => {
+    const { error } = await supabaseClient
+      .from('errors')
+      .update({ image: e.target.result })
+      .eq('id', id);
+
+    if (error) console.error('Image upload error:', error);
+    else {
+      const row = rows.find(r => r.id == id);
+      if (row) row.image = e.target.result;
+      renderTable();
+    }
+  };
   r.readAsDataURL(f);
 }
 
-function addRow() {
+async function addRow() {
   const subtopicSel = document.getElementById('inp-subtopic');
   let subtopicVal = subtopicSel.value;
   if (subtopicVal === 'Other') {
     subtopicVal = document.getElementById('inp-subtopic-other').value.trim() || 'Other';
   }
 
-  rows.push({
+  const newEntry = {
     starred:  false,
     topic:    document.getElementById('inp-topic').value,
     subtopic: subtopicVal,
@@ -1470,8 +1840,20 @@ function addRow() {
     root:     document.getElementById('inp-root').value.trim(),
     review:   document.getElementById('inp-review').value || 'Not Reviewed',
     image:    inpImage
-  });
-  save(); clearInput(); renderTable();
+  };
+
+  const { data, error } = await supabaseClient
+    .from('errors')
+    .insert([newEntry])
+    .select();
+
+  if (error) {
+    alert('Error adding entry: ' + error.message);
+  } else {
+    rows.unshift(data[0]);
+    clearInput();
+    renderTable();
+  }
 }
 
 function clearInput() {
@@ -1495,7 +1877,6 @@ function updateInpSubtopics() {
   const subs = topicSubtopics[topic] || [];
   subtopicSel.innerHTML = subs.map(s => `<option value="${escH(s)}">${escH(s)}</option>`).join('') + '<option value="Other">Other...</option>';
   
-  // Reset visibility if topic changes
   subtopicSel.style.display = 'block';
   document.getElementById('inp-subtopic-other').style.display = 'none';
 }
@@ -1522,7 +1903,6 @@ function handleInpImage(inputOrFile) {
   r.readAsDataURL(f);
 }
 
-// 🔹 Global Paste Event Listener for Images
 document.addEventListener('paste', e => {
   const items = (e.clipboardData || e.originalEvent.clipboardData).items;
   for (const item of items) {
@@ -1534,8 +1914,8 @@ document.addEventListener('paste', e => {
   }
 });
 
-function openModal(i) {
-  const row = rows[i]; if(!row||!row.image) return;
+function openModal(fi) {
+  const row = rows[fi]; if(!row||!row.image) return;
   document.getElementById('modal-img-el').src = row.image;
   document.getElementById('img-modal').classList.add('open');
 }
@@ -1546,8 +1926,13 @@ function closeModal(e) {
 document.addEventListener('keydown', e => {
   if (e.key==='Escape') document.getElementById('img-modal').classList.remove('open');
   const inpIds = ['inp-topic','inp-subtopic','inp-subtopic-other','inp-qnum','inp-etype','inp-did','inp-should','inp-root','inp-review'];
-  if (e.key==='Enter' && !e.shiftKey && inpIds.includes(document.activeElement?.id)) {
-    e.preventDefault(); addRow();
+  
+  if (e.key==='Enter' && !e.shiftKey) {
+    if (inpIds.includes(document.activeElement?.id)) {
+      e.preventDefault(); addRow();
+    } else if (document.activeElement?.id === 'pdf-current-page') {
+      e.preventDefault(); QuantCheatSheets.goToPage(document.activeElement.value);
+    }
   }
 });
 
@@ -1560,17 +1945,10 @@ function buildTopicFilter() {
 function buildInpTopics() {
   const sel = document.getElementById('inp-topic');
   sel.innerHTML = TOPICS.map(t => `<option value="${escH(t)}">${escH(t)}</option>`).join('');
-  
-  // Update subtopics on change (mouse click or enter)
   sel.onchange = updateInpSubtopics;
-  
-  // Update subtopics on keyup (Up/Down arrows) for mouse-less navigation
   sel.addEventListener('keyup', (e) => {
-    if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
-      updateInpSubtopics();
-    }
+    if (e.key === 'ArrowUp' || e.key === 'ArrowDown') updateInpSubtopics();
   });
-  
   updateInpSubtopics();
 }
 
@@ -1583,48 +1961,165 @@ function resetFilters() {
   renderTable();
 }
 
-function exportCSV() {
-  const h = ['Starred','#','Topic','Subtopic','Q#','Error Type','What I Did','What I Should Have Done','Root Cause','Review'];
-  const lines = [h.join(','), ...rows.map((r,i) =>
-    [r.starred?'Y':'N',i+1,...['topic','subtopic','qnum','etype','did','should','root','review'].map(f=>`"${(r[f]||'').replace(/"/g,'""')}"`)]
-    .join(',')
-  )];
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([lines.join('\n')],{type:'text/csv'}));
-  a.download = `gre_errors_${new Date().toISOString().slice(0,10)}.csv`;
-  a.click();
-}
-
 function switchTab(tab) {
-  const tabs = ['error-log', 'quant-practice'];
+  const tabs = ['error-log', 'quant-practice', 'quant-flashcards', 'quant-cheat-sheets'];
   tabs.forEach(t => {
-    document.getElementById(`${t}-tab`).style.display = t === tab ? 'block' : 'none';
+    const el = document.getElementById(`${t}-tab`);
+    if (el) el.style.display = t === tab ? 'block' : 'none';
     const navItem = document.getElementById(`nav-${t}`);
     if (navItem) navItem.classList.toggle('active', t === tab);
   });
 
-  // Toggle visibility of error-log specific elements
   const errorLogElements = [document.querySelector('.filter-bar'), document.querySelector('.input-row-wrapper')];
   errorLogElements.forEach(el => {
     if (el) el.style.display = tab === 'error-log' ? 'flex' : 'none';
   });
   
-  if (tab === 'quant-practice') {
-    QuantPractice.init();
-  }
+  if (tab === 'quant-practice') QuantPractice.init();
+  if (tab === 'quant-flashcards') QuantFlashcards.init();
+  if (tab === 'quant-cheat-sheets') QuantCheatSheets.init();
 }
+
+// ── QUANT FLASHCARDS MODULE ──
+const QuantFlashcards = {
+  allCards: [],
+  filteredCards: [],
+  currentIndex: 0,
+  currentTopic: 'All',
+  isFlipped: false,
+  masteredIds: new Set(JSON.parse(localStorage.getItem('gre_fc_mastered') || '[]')),
+
+  async init() {
+    if (this.allCards.length > 0) return;
+    try {
+      const resp = await fetch('flashcards.json');
+      this.allCards = await resp.json();
+      this.filteredCards = [...this.allCards];
+      this.renderTopicFilters();
+      this.renderCard();
+    } catch (e) {
+      console.error('Failed to load flashcards', e);
+    }
+  },
+
+  renderTopicFilters() {
+    const topics = ['All', ...new Set(this.allCards.map(c => c.topic))];
+    const container = document.getElementById('fc-topic-filters');
+    container.innerHTML = topics.map(t => 
+      `<div class="chip ${this.currentTopic === t ? 'active' : ''}" onclick="QuantFlashcards.filterByTopic('${t.replace(/'/g, "\\'")}')">${t}</div>`
+    ).join('');
+  },
+
+  filterByTopic(topic) {
+    this.currentTopic = topic;
+    this.filteredCards = topic === 'All' ? [...this.allCards] : this.allCards.filter(c => c.topic === topic);
+    this.currentIndex = 0;
+    this.isFlipped = false;
+    this.renderTopicFilters();
+    this.renderCard();
+  },
+
+  renderCard() {
+    if (this.filteredCards.length === 0) {
+      document.getElementById('fc-front-title').textContent = "No flashcards found.";
+      return;
+    }
+    const card = this.filteredCards[this.currentIndex];
+    const cardEl = document.getElementById('fc-card');
+    cardEl.classList.remove('flipped');
+    this.isFlipped = false;
+
+    document.getElementById('fc-front-topic').textContent = card.topic;
+    document.getElementById('fc-back-topic').textContent = card.topic;
+    
+    // Front Title: Use first line of text or topic + ID
+    const lines = card.text.split('\n').filter(l => l.trim().length > 5);
+    let title = card.topic + " #" + (this.currentIndex + 1);
+    if (lines.length > 0 && !lines[0].includes('Flashcards')) {
+      title = lines[0];
+    }
+    document.getElementById('fc-front-title').textContent = title;
+    
+    const imgEl = document.getElementById('fc-back-img');
+    imgEl.src = card.image;
+    
+    const masterBtn = document.getElementById('fc-master-btn');
+    masterBtn.classList.toggle('active', this.masteredIds.has(card.id));
+
+    this.updateProgress();
+    
+    // Auto-render math in title if any
+    if (window.renderMathInElement) {
+      renderMathInElement(document.getElementById('fc-front-title'), {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '$', right: '$', display: false},
+          {left: '\\(', right: '\\)', display: false},
+          {left: '\\[', right: '\\]', display: true}
+        ],
+        throwOnError: false
+      });
+    }
+  },
+
+  flip() {
+    this.isFlipped = !this.isFlipped;
+    document.getElementById('fc-card').classList.toggle('flipped', this.isFlipped);
+  },
+
+  next() {
+    if (this.filteredCards.length === 0) return;
+    this.currentIndex = (this.currentIndex + 1) % this.filteredCards.length;
+    this.renderCard();
+  },
+
+  prev() {
+    if (this.filteredCards.length === 0) return;
+    this.currentIndex = (this.currentIndex - 1 + this.filteredCards.length) % this.filteredCards.length;
+    this.renderCard();
+  },
+
+  shuffle() {
+    for (let i = this.filteredCards.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [this.filteredCards[i], this.filteredCards[j]] = [this.filteredCards[j], this.filteredCards[i]];
+    }
+    this.currentIndex = 0;
+    this.renderCard();
+  },
+
+  toggleMastery(e) {
+    e.stopPropagation();
+    const card = this.filteredCards[this.currentIndex];
+    if (this.masteredIds.has(card.id)) {
+      this.masteredIds.delete(card.id);
+    } else {
+      this.masteredIds.add(card.id);
+    }
+    localStorage.setItem('gre_fc_mastered', JSON.stringify([...this.masteredIds]));
+    document.getElementById('fc-master-btn').classList.toggle('active', this.masteredIds.has(card.id));
+    this.updateProgress();
+  },
+
+  updateProgress() {
+    const total = this.filteredCards.length;
+    const mastered = this.filteredCards.filter(c => this.masteredIds.has(c.id)).length;
+    const percent = total > 0 ? (mastered / total) * 100 : 0;
+    document.getElementById('fc-progress-fill').style.width = `${percent}%`;
+    document.getElementById('fc-progress-text').textContent = `${mastered}/${total} Mastered`;
+  }
+};
 
 // ── QUANT PRACTICE MODULE ──
 const QuantPractice = {
   questions: [],
   currentQuestions: [],
   currentIndex: 0,
-  mode: null, // 'topic' or 'mixed'
+  mode: null,
   timer: null,
   timeLeft: 35 * 60,
   userAnswers: {},
   results: { correct: 0, incorrect: 0 },
-
   async init() {
     if (this.questions.length > 0) return;
     try {
@@ -1633,262 +2128,189 @@ const QuantPractice = {
       this.questions = data.questions;
     } catch (e) {
       console.error('Failed to load questions', e);
-      document.getElementById('practice-container').innerHTML = '<p style="text-align:center; padding: 40px; color: var(--peach);">Error loading questions. Please ensure gre_quant_questions.json is present.</p>';
     }
   },
-
   showTopicSelection() {
     this.mode = 'topic';
     const topics = [...new Set(this.questions.map(q => q.topic))].sort();
     const screen = document.getElementById('practice-screen');
     const welcome = document.getElementById('practice-welcome');
-    
     welcome.style.display = 'none';
     screen.style.display = 'block';
-    
-    screen.innerHTML = `
-      <div style="display:flex; align-items:center; gap:16px; margin-bottom:24px;">
-        <button class="btn" onclick="QuantPractice.exitPractice()">← Back</button>
-        <h2 style="font-family:var(--font-serif); font-size:24px;">Select a Topic</h2>
-      </div>
-      <div class="topic-grid">
-        ${topics.map(t => {
-          const count = this.questions.filter(q => q.topic === t).length;
-          return `
-            <div class="topic-card" onclick="QuantPractice.showTypeSelection('${t.replace(/'/g, "\\'")}')">
-              <span>${t}</span>
-              <span class="count">${count} Qs</span>
-            </div>
-          `;
-        }).join('')}
-      </div>
-    `;
+    screen.innerHTML = `<div style="display:flex; align-items:center; gap:16px; margin-bottom:24px;"><button class="btn" onclick="QuantPractice.exitPractice()">← Back</button><h2 style="font-family:var(--font-serif); font-size:24px;">Select a Topic</h2></div><div class="topic-grid">${topics.map(t => `<div class="topic-card" onclick="QuantPractice.showTypeSelection('${t.replace(/'/g, "\\'")}')"><span>${t}</span><span class="count">${this.questions.filter(q => q.topic === t).length} Qs</span></div>`).join('')}</div>`;
   },
-
   showTypeSelection(topic) {
     const questionsInTopic = this.questions.filter(q => q.topic === topic);
     const types = [...new Set(questionsInTopic.map(q => q.question_type))];
     const screen = document.getElementById('practice-screen');
-    
-    const typeLabels = {
-      'multiple_choice': 'Multiple Choice (MCQ)',
-      'quantitative_comparison': 'Quantitative Comparison',
-      'numeric_entry': 'Numeric Entry / Fill in Blank'
-    };
-
-    screen.innerHTML = `
-      <div style="display:flex; align-items:center; gap:16px; margin-bottom:24px;">
-        <button class="btn" onclick="QuantPractice.showTopicSelection()">← Back to Topics</button>
-        <div>
-          <div style="font-size:11px; text-transform:uppercase; color:var(--text-muted);">${topic}</div>
-          <h2 style="font-family:var(--font-serif); font-size:24px;">Select Question Type</h2>
-        </div>
-      </div>
-      <div class="topic-grid">
-        ${types.map(type => {
-          const count = questionsInTopic.filter(q => q.question_type === type).length;
-          return `
-            <div class="topic-card" onclick="QuantPractice.startTopicPractice('${topic.replace(/'/g, "\\'")}', '${type}')">
-              <span>${typeLabels[type] || type}</span>
-              <span class="count">${count} Qs</span>
-            </div>
-          `;
-        }).join('')}
-        <div class="topic-card" onclick="QuantPractice.startTopicPractice('${topic.replace(/'/g, "\\'")}', 'all')">
-          <span>All Types</span>
-          <span class="count">${questionsInTopic.length} Qs</span>
-        </div>
-      </div>
-    `;
+    const typeLabels = { 'multiple_choice': 'Multiple Choice (MCQ)', 'quantitative_comparison': 'Quantitative Comparison', 'numeric_entry': 'Numeric Entry / Fill in Blank' };
+    screen.innerHTML = `<div style="display:flex; align-items:center; gap:16px; margin-bottom:24px;"><button class="btn" onclick="QuantPractice.showTopicSelection()">← Back to Topics</button><div><div style="font-size:11px; text-transform:uppercase; color:var(--text-muted);">${topic}</div><h2 style="font-family:var(--font-serif); font-size:24px;">Select Question Type</h2></div></div><div class="topic-grid">${types.map(type => `<div class="topic-card" onclick="QuantPractice.startTopicPractice('${topic.replace(/'/g, "\\'")}', '${type}')"><span>${typeLabels[type] || type}</span><span class="count">${questionsInTopic.filter(q => q.topic === t).length} Qs</span></div>`).join('')}<div class="topic-card" onclick="QuantPractice.startTopicPractice('${topic.replace(/'/g, "\\'")}', 'all')"><span>All Types</span><span class="count">${questionsInTopic.length} Qs</span></div></div>`;
   },
-
   startTopicPractice(topic, type) {
     this.mode = 'topic';
     this.currentQuestions = this.questions.filter(q => q.topic === topic && (type === 'all' || q.question_type === type));
     this.currentIndex = 0;
     this.userAnswers = {};
-    this.results = { correct: 0, incorrect: 0 };
     this.renderQuestion();
   },
-
   startMixedPractice() {
     this.mode = 'mixed';
     this.userAnswers = {};
-    this.results = { correct: 0, incorrect: 0 };
     this.currentIndex = 0;
-    
-    // GRE-like mix: 20 questions
-    // Shuffling all questions and picking 20
-    this.currentQuestions = [...this.questions]
-      .sort(() => Math.random() - 0.5)
-      .slice(0, 20);
-    
-    document.getElementById('practice-timer').style.display = 'block';
-    this.startTimer();
+    this.currentQuestions = [...this.questions].sort(() => Math.random() - 0.5).slice(0, 20);
     this.renderQuestion();
   },
-
-  startTimer() {
-    if (this.timer) clearInterval(this.timer);
-    this.timeLeft = 35 * 60;
-    const timerEl = document.getElementById('practice-timer');
-    
-    const update = () => {
-      const m = Math.floor(this.timeLeft / 60);
-      const s = this.timeLeft % 60;
-      timerEl.textContent = `${m}:${s.toString().padStart(2, '0')}`;
-      
-      if (this.timeLeft <= 300) timerEl.classList.add('timer-warn');
-      else timerEl.classList.remove('timer-warn');
-
-      if (this.timeLeft <= 0) {
-        clearInterval(this.timer);
-        this.submitTest();
-      }
-      this.timeLeft--;
-    };
-    
-    update();
-    this.timer = setInterval(update, 1000);
-  },
-
   renderQuestion() {
     const screen = document.getElementById('practice-screen');
-    const welcome = document.getElementById('practice-welcome');
-    welcome.style.display = 'none';
-    screen.style.display = 'block';
-
     const q = this.currentQuestions[this.currentIndex];
-    const isSubmitted = this.userAnswers[this.currentIndex] !== undefined;
-    
-    let inputHtml = '';
-    if (q.question_type === 'multiple_choice' || q.question_type === 'quantitative_comparison') {
-      const choices = q.answer_choices || {};
-      inputHtml = `<div class="choices-list">
-        ${Object.entries(choices).map(([letter, text]) => {
-          if (!text && letter > 'B' && q.question_type === 'quantitative_comparison') return '';
-          let cls = 'choice-item';
-          if (isSubmitted) {
-            if (letter === q.correct_answer) cls += ' correct';
-            else if (letter === this.userAnswers[this.currentIndex]) cls += ' incorrect';
-          } else if (this.userAnswers[this.currentIndex] === letter) {
-            cls += ' selected';
-          }
-          return `<div class="${cls}" onclick="QuantPractice.selectAnswer('${letter}')">
-            <span class="choice-letter">${letter}</span>
-            <span>${text}</span>
-          </div>`;
-        }).join('')}
-      </div>`;
-    } else if (q.question_type === 'numeric_entry') {
-      inputHtml = `
-        <input type="text" class="numeric-input" id="q-numeric-inp" 
-               placeholder="Enter number..." 
-               value="${this.userAnswers[this.currentIndex] || ''}"
-               ${isSubmitted ? 'disabled' : ''}
-               onchange="QuantPractice.userAnswers[${this.currentIndex}] = this.value">
-      `;
-    }
-
-    screen.innerHTML = `
-      <div class="q-header">
-        <div class="q-meta">${q.topic} · Question ${this.currentIndex + 1} of ${this.currentQuestions.length}</div>
-        <button class="btn btn-ghost" onclick="QuantPractice.exitPractice()">Exit</button>
-      </div>
-      
-      <div class="question-container">
-        <div class="q-text">${q.question_text || q.raw_text.split('\n(A)')[0]}</div>
-        
-        ${q.question_type === 'quantitative_comparison' ? `
-          <div class="qc-container">
-            <div class="qc-box"><div class="qc-label">Quantity A</div><div class="qc-val">${q.quantity_a}</div></div>
-            <div class="qc-box"><div class="qc-label">Quantity B</div><div class="qc-val">${q.quantity_b}</div></div>
-          </div>
-        ` : ''}
-
-        ${inputHtml}
-
-        <div class="explanation-box" id="explanation-box" style="${isSubmitted ? 'display:block' : ''}">
-          <h4>Explanation</h4>
-          <div class="explanation-text">
-            ${q.explanation || 'Detailed explanation not available in the dataset for this question. Practice the concept by reviewing the topic rules.'}
-            ${q.correct_answer ? `<p style="margin-top:12px;"><strong>Correct Answer: ${q.correct_answer}</strong></p>` : ''}
-          </div>
-        </div>
-
-        <div class="progress-bar-container">
-          <div class="progress-bar-fill" style="width: ${((this.currentIndex + 1) / this.currentQuestions.length) * 100}%"></div>
-        </div>
-
-        <div class="actions">
-          ${this.currentIndex > 0 ? `<button class="btn" onclick="QuantPractice.prevQ()">Previous</button>` : ''}
-          ${!isSubmitted ? `<button class="btn btn-primary" onclick="QuantPractice.submitAnswer()">Submit Answer</button>` : ''}
-          ${isSubmitted && this.currentIndex < this.currentQuestions.length - 1 ? `<button class="btn btn-primary" onclick="QuantPractice.nextQ()">Next Question</button>` : ''}
-          ${isSubmitted && this.currentIndex === this.currentQuestions.length - 1 ? `<button class="btn btn-primary" onclick="QuantPractice.showResults()">Finish</button>` : ''}
-        </div>
-      </div>
-    `;
+    screen.innerHTML = `<div class="q-header"><div class="q-meta">${q.topic} · Q${this.currentIndex + 1}</div><button class="btn btn-ghost" onclick="QuantPractice.exitPractice()">Exit</button></div><div class="question-container"><div class="q-text">${q.question_text || q.raw_text}</div><div class="actions"><button class="btn" onclick="QuantPractice.exitPractice()">Back</button></div></div>`;
   },
-
-  selectAnswer(letter) {
-    if (this.userAnswers[this.currentIndex] !== undefined && this.mode === 'topic') return;
-    this.userAnswers[this.currentIndex] = letter;
-    this.renderQuestion();
-  },
-
-  submitAnswer() {
-    const ans = this.userAnswers[this.currentIndex];
-    if (ans === undefined) {
-      alert('Please select or enter an answer.');
-      return;
-    }
-    
-    // Note: Since correct_answer is missing in JSON, we can't truly validate.
-    // For this prototype, we'll mark it as submitted and show the explanation box.
-    // In a real app, you'd compare with q.correct_answer.
-    
-    this.renderQuestion();
-    document.getElementById('explanation-box').style.display = 'block';
-  },
-
-  nextQ() {
-    if (this.currentIndex < this.currentQuestions.length - 1) {
-      this.currentIndex++;
-      this.renderQuestion();
-    }
-  },
-
-  prevQ() {
-    if (this.currentIndex > 0) {
-      this.currentIndex--;
-      this.renderQuestion();
-    }
-  },
-
-  showResults() {
-    clearInterval(this.timer);
-    document.getElementById('practice-timer').style.display = 'none';
-    const screen = document.getElementById('practice-screen');
-    
-    screen.innerHTML = `
-      <div class="practice-welcome">
-        <h2>Practice Session Complete!</h2>
-        <p>You've completed ${this.currentQuestions.length} questions in ${this.mode === 'mixed' ? 'Mixed' : 'Topic-wise'} mode.</p>
-        <div style="margin: 32px 0; font-size: 20px;">
-           Mode: <strong>${this.mode === 'mixed' ? 'Timed' : 'Untimed'}</strong>
-        </div>
-        <button class="btn btn-primary" onclick="QuantPractice.exitPractice()">Return to Practice Home</button>
-      </div>
-    `;
-  },
-
   exitPractice() {
-    clearInterval(this.timer);
-    document.getElementById('practice-timer').style.display = 'none';
     document.getElementById('practice-screen').style.display = 'none';
     document.getElementById('practice-welcome').style.display = 'block';
-    this.currentIndex = 0;
-    this.currentQuestions = [];
+  }
+};
+
+// ── CHEAT SHEETS MODULE ──
+const QuantCheatSheets = {
+  pdf: null,
+  scale: 1.5,
+  container: null,
+  observer: null,
+  pages: [],
+  
+  async init() {
+    if (this.pdf) return;
+    this.container = document.getElementById('pdf-viewer');
+    this.container.innerHTML = '<div class="pdf-loading-skeleton" style="height: 500px; width: 80%; border-radius: 8px;"></div>';
+    
+    try {
+      const loadingTask = pdfjsLib.getDocument('GRE Math Formulas.pdf');
+      this.pdf = await loadingTask.promise;
+      document.getElementById('pdf-total-pages').textContent = this.pdf.numPages;
+      this.setupIntersectionObserver();
+      this.renderInitialState();
+    } catch (e) {
+      console.error('Error loading PDF:', e);
+      this.container.innerHTML = '<div class="empty-state"><h3>Failed to load PDF</h3><p>Ensure "GRE Math Formulas.pdf" is in the project root.</p></div>';
+    }
+  },
+  
+  setupIntersectionObserver() {
+    this.observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const pageNum = parseInt(entry.target.dataset.pageNum);
+          this.renderPage(pageNum);
+          document.getElementById('pdf-current-page').value = pageNum;
+        }
+      });
+    }, { threshold: 0.1 });
+  },
+  
+  renderInitialState() {
+    this.container.innerHTML = '';
+    this.pages = [];
+    for (let i = 1; i <= this.pdf.numPages; i++) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'pdf-page-wrapper';
+      wrapper.dataset.pageNum = i;
+      wrapper.id = `pdf-page-wrapper-${i}`;
+      wrapper.style.minHeight = '800px'; 
+      wrapper.style.width = 'fit-content';
+      
+      this.container.appendChild(wrapper);
+      this.observer.observe(wrapper);
+      this.pages.push({ rendered: false, wrapper });
+    }
+  },
+  
+  async renderPage(num) {
+    const pageData = this.pages[num - 1];
+    if (pageData.rendered) return;
+    
+    const page = await this.pdf.getPage(num);
+    const viewport = page.getViewport({ scale: this.scale });
+    
+    const wrapper = pageData.wrapper;
+    wrapper.style.minHeight = 'auto';
+    
+    const canvas = document.createElement('canvas');
+    canvas.className = 'pdf-canvas';
+    const context = canvas.getContext('2d');
+    canvas.height = viewport.height;
+    canvas.width = viewport.width;
+    
+    wrapper.appendChild(canvas);
+    
+    const renderContext = {
+      canvasContext: context,
+      viewport: viewport
+    };
+    await page.render(renderContext).promise;
+    pageData.rendered = true;
+  },
+
+  zoomIn() {
+    this.scale += 0.25;
+    this.updateZoomDisplay();
+    this.refreshAllPages();
+  },
+
+  zoomOut() {
+    if (this.scale <= 0.5) return;
+    this.scale -= 0.25;
+    this.updateZoomDisplay();
+    this.refreshAllPages();
+  },
+
+  updateZoomDisplay() {
+    document.getElementById('pdf-zoom-level').textContent = Math.round(this.scale * 100) + '%';
+  },
+
+  refreshAllPages() {
+    this.pages.forEach(p => {
+      p.rendered = false;
+      p.wrapper.innerHTML = '';
+      p.wrapper.style.minHeight = '800px';
+    });
+  },
+
+  fitToWidth() {
+    const containerWidth = this.container.clientWidth - 40;
+    this.pdf.getPage(1).then(page => {
+      const viewport = page.getViewport({ scale: 1 });
+      this.scale = containerWidth / viewport.width;
+      this.updateZoomDisplay();
+      this.refreshAllPages();
+    });
+  },
+
+  goToPage(num) {
+    const n = parseInt(num);
+    if (n >= 1 && n <= this.pdf.numPages) {
+      const el = document.getElementById(`pdf-page-wrapper-${n}`);
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }
+  },
+
+  nextPage() {
+    const curr = parseInt(document.getElementById('pdf-current-page').value);
+    this.goToPage(curr + 1);
+  },
+
+  prevPage() {
+    const curr = parseInt(document.getElementById('pdf-current-page').value);
+    this.goToPage(curr - 1);
+  },
+
+  toggleFullscreen() {
+    const el = this.container.parentElement;
+    if (!document.fullscreenElement) {
+      el.requestFullscreen().catch(err => console.error(err));
+    } else {
+      document.exitFullscreen();
+    }
   }
 };
 
@@ -1896,17 +2318,12 @@ const QuantPractice = {
 function initTheme() {
   const saved = localStorage.getItem('gre_theme') || 'light';
   document.documentElement.setAttribute('data-theme', saved);
-  updateThemeToggle(saved);
 }
 function toggleTheme() {
   const curr = document.documentElement.getAttribute('data-theme');
   const next = curr === 'dark' ? 'light' : 'dark';
   document.documentElement.setAttribute('data-theme', next);
   localStorage.setItem('gre_theme', next);
-  updateThemeToggle(next);
-}
-function updateThemeToggle(theme) {
-  // Visuals handled by CSS [data-theme] selectors
 }
 document.getElementById('theme-toggle').onclick = toggleTheme;
 
@@ -1916,3 +2333,6 @@ document.getElementById('inp-topic').focus();
 </script>
 </body>
 </html>
+
+
+

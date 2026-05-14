@@ -1,0 +1,7 @@
+node_modules/
+page_*.png
+payload.json
+analysis.json
+.DS_Store
+*.pyc
+__pycache__/
