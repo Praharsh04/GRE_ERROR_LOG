@@ -881,6 +881,189 @@
       padding: 12px;
     }
   }
+
+  /* ── PACE TRAINER SIDEBAR ── */
+  .pt-sidebar {
+    position: fixed;
+    top: 0;
+    right: -420px;
+    width: 400px;
+    height: 100vh;
+    background: var(--surface);
+    border-left: 1px solid var(--border);
+    box-shadow: var(--shadow-lg);
+    z-index: 1000;
+    transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    font-family: var(--font-sans);
+  }
+  .pt-sidebar.open { right: 0; }
+  .pt-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    backdrop-filter: blur(2px);
+  }
+  .pt-overlay.open { opacity: 1; pointer-events: auto; }
+  .pt-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg2);
+  }
+  .pt-title {
+    font-family: var(--font-serif);
+    font-size: 20px;
+    color: var(--text);
+  }
+  .pt-close {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text);
+    font-size: 14px;
+    transition: all 0.15s;
+  }
+  .pt-close:hover { background: var(--peach); color: white; border-color: var(--peach); }
+  .pt-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .pt-section-title {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    margin-bottom: 12px;
+    font-weight: 600;
+  }
+  .pt-presets {
+    display: flex;
+    gap: 8px;
+  }
+  .pt-preset-btn {
+    flex: 1;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 4px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s;
+    color: var(--text-mid);
+  }
+  .pt-preset-btn:hover {
+    border-color: var(--peach-light);
+    color: var(--peach);
+    background: var(--peach-faint);
+  }
+  .pt-preset-name { font-weight: 600; font-size: 13px; margin-bottom: 4px; color: var(--text); }
+  .pt-preset-desc { font-size: 11px; font-family: var(--font-mono); opacity: 0.8; }
+  
+  .pt-config-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  .pt-config-group { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+  .pt-label { font-size: 12px; color: var(--text-mid); font-weight: 500; }
+  .pt-input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .pt-input:focus { border-color: var(--peach); }
+  
+  .pt-timer-display {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    text-align: center;
+    display: none;
+  }
+  .pt-timer-display.active { display: block; }
+  .pt-countdown {
+    font-size: 48px;
+    font-family: var(--font-mono);
+    font-weight: 300;
+    color: var(--text);
+    line-height: 1;
+    margin: 8px 0 20px;
+    font-variant-numeric: tabular-nums;
+  }
+  .pt-progress-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    font-family: var(--font-mono);
+    color: var(--text-mid);
+    margin-bottom: 8px;
+  }
+  .pt-progress-bar-bg {
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  .pt-progress-bar-fill {
+    height: 100%;
+    background: var(--peach);
+    width: 0%;
+    transition: width 0.3s;
+  }
+  .pt-stats-row {
+    display: flex;
+    justify-content: space-between;
+  }
+  .pt-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .pt-stat.right { text-align: right; }
+  .pt-stat-label { font-size: 10px; color: var(--text-muted); font-family: var(--font-mono); text-transform: uppercase; }
+  .pt-stat-val { font-size: 14px; color: var(--text); font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+  
+  .pt-footer {
+    padding: 20px 24px;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+    display: flex;
+    gap: 12px;
+  }
+  .pt-footer .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  
+  @media (max-width: 768px) {
+    .pt-sidebar { width: 100%; right: -100%; }
+    .pt-sidebar.open { right: 0; }
+  }
 </style>
 </head>
 <body>
@@ -906,6 +1089,7 @@
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
     </div>
   </div>
+  <button class="btn" onclick="togglePaceTrainer()" style="margin-left:4px;">⏱ Pace Trainer</button>
   <button class="btn btn-primary" onclick="exportCSV()" style="margin-left:4px;">↓ Export CSV</button>
 </header>
 
@@ -1036,6 +1220,82 @@
 <div class="modal-overlay" id="img-modal" onclick="closeModal(event)">
   <div class="modal-close" onclick="closeModal()">✕</div>
   <img class="modal-img" id="modal-img-el" src="" alt="Question Image">
+</div>
+
+<!-- PACE TRAINER -->
+<div class="pt-overlay" id="pt-overlay" onclick="togglePaceTrainer()"></div>
+<div class="pt-sidebar" id="pt-sidebar">
+  <div class="pt-header">
+    <div class="pt-title">⏱ Pace Trainer</div>
+    <div class="pt-close" onclick="togglePaceTrainer()">✕</div>
+  </div>
+  <div class="pt-content">
+    
+    <div>
+      <div class="pt-section-title">Presets</div>
+      <div class="pt-presets">
+        <div class="pt-preset-btn" onclick="ptApplyPreset(1,45,20)">
+          <div class="pt-preset-name">Quant</div>
+          <div class="pt-preset-desc">1m 45s · 20Q</div>
+        </div>
+        <div class="pt-preset-btn" onclick="ptApplyPreset(1,30,20)">
+          <div class="pt-preset-name">Verbal</div>
+          <div class="pt-preset-desc">1m 30s · 20Q</div>
+        </div>
+        <div class="pt-preset-btn" onclick="ptApplyPreset(4,0,10)">
+          <div class="pt-preset-name">RC</div>
+          <div class="pt-preset-desc">4m 00s · 10Q</div>
+        </div>
+      </div>
+    </div>
+    
+    <div>
+      <div class="pt-section-title">Configuration</div>
+      <div class="pt-config-row">
+        <div class="pt-config-group">
+          <label class="pt-label">Minutes</label>
+          <input type="number" id="pt-inp-min" class="pt-input" value="1" min="0" max="60" oninput="ptConfigChanged()">
+        </div>
+        <div class="pt-config-group">
+          <label class="pt-label">Seconds</label>
+          <input type="number" id="pt-inp-sec" class="pt-input" value="45" min="0" max="59" oninput="ptConfigChanged()">
+        </div>
+        <div class="pt-config-group">
+          <label class="pt-label">Questions</label>
+          <input type="number" id="pt-inp-q" class="pt-input" value="20" min="1" max="200" oninput="ptConfigChanged()">
+        </div>
+      </div>
+    </div>
+    
+    <div class="pt-timer-display" id="pt-timer-display">
+      <div class="pt-section-title">Next Alert In</div>
+      <div class="pt-countdown" id="pt-lbl-countdown">01:45</div>
+      
+      <div class="pt-progress-row">
+        <span id="pt-lbl-progress">0 / 20</span>
+        <span id="pt-lbl-percent">0%</span>
+      </div>
+      <div class="pt-progress-bar-bg">
+        <div class="pt-progress-bar-fill" id="pt-bar-fill"></div>
+      </div>
+      
+      <div class="pt-stats-row">
+        <div class="pt-stat">
+          <span class="pt-stat-label">Elapsed</span>
+          <span class="pt-stat-val" id="pt-lbl-elapsed">00:00</span>
+        </div>
+        <div class="pt-stat right">
+          <span class="pt-stat-label">Remaining</span>
+          <span class="pt-stat-val" id="pt-lbl-remaining">35:00</span>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+  <div class="pt-footer">
+    <button class="btn btn-primary" id="pt-btn-start" onclick="ptToggleStart()" style="flex: 2; justify-content: center; padding: 12px; font-size: 14px;">Start</button>
+    <button class="btn" id="pt-btn-reset" onclick="ptReset()" style="flex: 1; justify-content: center; padding: 12px; font-size: 14px;" disabled>Reset</button>
+  </div>
 </div>
 
 <script>
@@ -1411,6 +1671,189 @@ document.getElementById('theme-toggle').onclick = toggleTheme;
 initTheme();
 load(); buildTopicFilter(); buildInpTopics(); renderTable();
 document.getElementById('inp-topic').focus();
+
+// ── PACE TRAINER LOGIC ──
+let ptState = 'idle'; // idle, running, paused, completed
+let ptIntervalMs = 0;
+let ptTotalQ = 0;
+let ptCompletedQ = 0;
+let ptStartTs = 0;
+let ptPauseTs = 0;
+let ptAccumPause = 0;
+let ptTimerId = null;
+
+let ptAudioCtx = null;
+
+function ptInitAudio() {
+  if (!ptAudioCtx) ptAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (ptAudioCtx.state === 'suspended') ptAudioCtx.resume();
+}
+
+function ptPlayBeep(freq, type, duration) {
+  if (!ptAudioCtx) return;
+  const osc = ptAudioCtx.createOscillator();
+  const gain = ptAudioCtx.createGain();
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, ptAudioCtx.currentTime);
+  gain.gain.setValueAtTime(0.1, ptAudioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, ptAudioCtx.currentTime + duration);
+  osc.connect(gain);
+  gain.connect(ptAudioCtx.destination);
+  osc.start();
+  osc.stop(ptAudioCtx.currentTime + duration);
+}
+
+function ptPlayIntervalBeep() { ptPlayBeep(600, 'sine', 0.5); }
+function ptPlayCompletionBeep() { 
+  ptPlayBeep(400, 'sine', 0.3);
+  setTimeout(() => ptPlayBeep(600, 'sine', 0.4), 300);
+}
+
+function togglePaceTrainer() {
+  const sidebar = document.getElementById('pt-sidebar');
+  const overlay = document.getElementById('pt-overlay');
+  sidebar.classList.toggle('open');
+  overlay.classList.toggle('open');
+  if (sidebar.classList.contains('open')) {
+    if(ptState === 'idle') ptConfigChanged();
+  }
+}
+
+function ptFormatTime(ms) {
+  if (ms < 0) ms = 0;
+  const totalSec = Math.floor(ms / 1000);
+  const m = Math.floor(totalSec / 60);
+  const s = totalSec % 60;
+  return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+}
+
+function ptApplyPreset(m, s, q) {
+  if (ptState !== 'idle') return;
+  document.getElementById('pt-inp-min').value = m;
+  document.getElementById('pt-inp-sec').value = s;
+  document.getElementById('pt-inp-q').value = q;
+  ptConfigChanged();
+}
+
+function ptConfigChanged() {
+  if (ptState !== 'idle') return;
+  const m = parseInt(document.getElementById('pt-inp-min').value) || 0;
+  const s = parseInt(document.getElementById('pt-inp-sec').value) || 0;
+  const q = parseInt(document.getElementById('pt-inp-q').value) || 1;
+  
+  ptIntervalMs = (m * 60 + s) * 1000;
+  ptTotalQ = q;
+  
+  document.getElementById('pt-lbl-countdown').textContent = ptFormatTime(ptIntervalMs);
+  document.getElementById('pt-lbl-remaining').textContent = ptFormatTime(ptIntervalMs * q);
+  document.getElementById('pt-lbl-elapsed').textContent = "00:00";
+  document.getElementById('pt-lbl-progress').textContent = `0 / ${q}`;
+  document.getElementById('pt-lbl-percent').textContent = "0%";
+  document.getElementById('pt-bar-fill').style.width = "0%";
+}
+
+function ptNetElapsedMs() {
+  if (ptState === 'paused') return (ptPauseTs - ptStartTs) - ptAccumPause;
+  return (performance.now() - ptStartTs) - ptAccumPause;
+}
+
+function ptPoll() {
+  if (ptState !== 'running') return;
+  
+  const net = ptNetElapsedMs();
+  const sessionTotalMs = ptIntervalMs * ptTotalQ;
+  
+  let intervalsDone = Math.floor(net / ptIntervalMs);
+  if (intervalsDone > ptTotalQ) intervalsDone = ptTotalQ;
+  
+  while (ptCompletedQ < intervalsDone) {
+    ptCompletedQ++;
+    ptUpdateProgressUI();
+    if (ptCompletedQ < ptTotalQ) ptPlayIntervalBeep();
+  }
+  
+  if (ptCompletedQ >= ptTotalQ) {
+    ptState = 'completed';
+    cancelAnimationFrame(ptTimerId);
+    ptPlayCompletionBeep();
+    ptUpdateUIState();
+    return;
+  }
+  
+  const elapsedInInterval = net % ptIntervalMs;
+  const remainingInInterval = Math.max(0, ptIntervalMs - elapsedInInterval);
+  const remainingSession = Math.max(0, sessionTotalMs - net);
+  
+  document.getElementById('pt-lbl-countdown').textContent = ptFormatTime(remainingInInterval);
+  document.getElementById('pt-lbl-elapsed').textContent = ptFormatTime(net);
+  document.getElementById('pt-lbl-remaining').textContent = ptFormatTime(remainingSession);
+  
+  ptTimerId = requestAnimationFrame(ptPoll);
+}
+
+function ptUpdateProgressUI() {
+  document.getElementById('pt-lbl-progress').textContent = `${ptCompletedQ} / ${ptTotalQ}`;
+  const pct = ptTotalQ > 0 ? Math.floor((ptCompletedQ / ptTotalQ) * 100) : 0;
+  document.getElementById('pt-lbl-percent').textContent = `${pct}%`;
+  document.getElementById('pt-bar-fill').style.width = `${pct}%`;
+}
+
+function ptToggleStart() {
+  ptInitAudio();
+  if (ptState === 'idle' || ptState === 'completed') {
+    ptConfigChanged();
+    if (ptIntervalMs <= 0 || ptTotalQ <= 0) return;
+    ptStartTs = performance.now();
+    ptAccumPause = 0;
+    ptCompletedQ = 0;
+    ptState = 'running';
+    ptUpdateProgressUI();
+    ptUpdateUIState();
+    ptTimerId = requestAnimationFrame(ptPoll);
+  } else if (ptState === 'running') {
+    ptState = 'paused';
+    ptPauseTs = performance.now();
+    cancelAnimationFrame(ptTimerId);
+    ptUpdateUIState();
+  } else if (ptState === 'paused') {
+    ptAccumPause += (performance.now() - ptPauseTs);
+    ptState = 'running';
+    ptUpdateUIState();
+    ptTimerId = requestAnimationFrame(ptPoll);
+  }
+}
+
+function ptReset() {
+  ptState = 'idle';
+  cancelAnimationFrame(ptTimerId);
+  ptConfigChanged();
+  ptUpdateUIState();
+}
+
+function ptUpdateUIState() {
+  const isIdle = (ptState === 'idle');
+  const isRunning = (ptState === 'running');
+  const isPaused = (ptState === 'paused');
+  const isCompleted = (ptState === 'completed');
+  
+  document.getElementById('pt-timer-display').classList.toggle('active', !isIdle);
+  document.getElementById('pt-inp-min').disabled = !isIdle;
+  document.getElementById('pt-inp-sec').disabled = !isIdle;
+  document.getElementById('pt-inp-q').disabled = !isIdle;
+  
+  const btnStart = document.getElementById('pt-btn-start');
+  if (isIdle || isCompleted) btnStart.textContent = "Start";
+  else if (isRunning) btnStart.textContent = "Pause";
+  else if (isPaused) btnStart.textContent = "Resume";
+  
+  document.getElementById('pt-btn-reset').disabled = isIdle;
+  
+  if (isCompleted) {
+    document.getElementById('pt-lbl-countdown').textContent = "00:00";
+    document.getElementById('pt-lbl-remaining').textContent = "00:00";
+    document.getElementById('pt-lbl-elapsed').textContent = ptFormatTime(ptIntervalMs * ptTotalQ);
+  }
+}
 </script>
 </body>
 </html>
