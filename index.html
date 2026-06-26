@@ -129,6 +129,35 @@
     margin-top: 1px;
   }
 
+  .mode-switcher {
+    display: flex;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 2px;
+    margin-left: 24px;
+  }
+  .mode-btn {
+    background: transparent;
+    border: none;
+    padding: 6px 16px;
+    border-radius: 6px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: var(--font-sans);
+  }
+  .mode-btn.active {
+    background: var(--surface);
+    color: var(--peach);
+    box-shadow: var(--shadow-sm);
+  }
+  .mode-btn:hover:not(.active) {
+    color: var(--text);
+  }
+
   .header-stats {
     display: flex;
     gap: 8px;
@@ -753,7 +782,36 @@
       flex-wrap: wrap;
       gap: 12px;
     }
-    .header-stats {
+    .mode-switcher {
+    display: flex;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 2px;
+    margin-left: 24px;
+  }
+  .mode-btn {
+    background: transparent;
+    border: none;
+    padding: 6px 16px;
+    border-radius: 6px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: var(--font-sans);
+  }
+  .mode-btn.active {
+    background: var(--surface);
+    color: var(--peach);
+    box-shadow: var(--shadow-sm);
+  }
+  .mode-btn:hover:not(.active) {
+    color: var(--text);
+  }
+
+  .header-stats {
       width: 100%;
       margin-left: 0;
       justify-content: space-between;
@@ -1073,8 +1131,12 @@
 <header class="header">
   <div class="logo-mark"><img src="logo.png" alt="Q"></div>
   <div>
-    <div class="header-title">GRE <em>Quant</em> · Error Log</div>
+    <div class="header-title">GRE <em id="header-title-em">Quant</em> · Error Log</div>
     <div class="header-sub">Local · No backend · Auto-saved</div>
+  </div>
+  <div class="mode-switcher">
+    <button class="mode-btn active" id="btn-mode-Quant" onclick="switchMode('Quant')">Quant</button>
+    <button class="mode-btn" id="btn-mode-Verbal" onclick="switchMode('Verbal')">Verbal</button>
   </div>
   <div class="header-stats">
     <div class="stat-chip">Total <strong id="stat-total">0</strong></div>
@@ -1107,12 +1169,6 @@
   </select>
   <select class="filter-select" id="filter-etype" onchange="renderTable()">
     <option value="">All Error Types</option>
-    <option value="Silly Mistake">Silly Mistake</option>
-    <option value="Concept Gap">Concept Gap</option>
-    <option value="Misread">Misread</option>
-    <option value="Time Pressure">Time Pressure</option>
-    <option value="Formula Error">Formula Error</option>
-    <option value="Other">Other</option>
   </select>
   <button class="btn-toggle-star" id="filter-starred" onclick="toggleStarredFilter()">☆ Show Starred Only</button>
   <button class="btn btn-ghost" onclick="resetFilters()" style="font-size:11px;">✕ Reset</button>
@@ -1144,9 +1200,9 @@
         <th>Subtopic</th>
         <th>Q#</th>
         <th>Error Type</th>
-        <th>What I Did</th>
-        <th>What I Should've Done</th>
-        <th>Root Cause</th>
+        <th id="th-did">What I Did</th>
+        <th id="th-should">What I Should've Done</th>
+        <th id="th-root">Root Cause</th>
         <th>Review</th>
         <th>Image</th>
         <th></th>
@@ -1181,12 +1237,6 @@
     <div class="inp-cell c-etype-inp">
       <select class="inp-select" id="inp-etype" tabindex="4">
         <option value="">Error Type…</option>
-        <option value="Silly Mistake">Silly Mistake</option>
-        <option value="Concept Gap">Concept Gap</option>
-        <option value="Misread">Misread</option>
-        <option value="Time Pressure">Time Pressure</option>
-        <option value="Formula Error">Formula Error</option>
-        <option value="Other">Other</option>
       </select>
     </div>
     <div class="inp-cell c-did-inp">
@@ -1314,117 +1364,129 @@
 </div>
 
 <script>
-// 🔹 Topic → Subtopic Mapping (Provided by User)
-const topicSubtopics = {
-  "Arithmetic": [
-    "Integers & Basic Operations",
-    "Place Value",
-    "Fractions & Decimals",
-    "Percents",
-    "Ratios",
-    "Averages"
-  ],
-  "Algebra": [
-    "Linear Equations",
-    "Inequalities",
-    "Systems of Equations",
-    "Exponents & Roots",
-    "Algebraic Expressions"
-  ],
-  "Number Properties": [
-    "Divisibility",
-    "Prime Numbers",
-    "Factors & Multiples",
-    "LCM & GCF",
-    "Remainders",
-    "Units Digit"
-  ],
-  "Word Problems": [
-    "Basic Word Problems",
-    "Rates & Work",
-    "Mixtures",
-    "Two-variable Word Problems",
-    "Variables in Choices"
-  ],
-  "Sequences & Functions": [
-    "Arithmetic Sequences",
-    "Geometric Sequences",
-    "Recursive Sequences",
-    "Functions",
-    "Pattern Recognition"
-  ],
-  "Coordinate Geometry": [
-    "Slope",
-    "Distance",
-    "Midpoint",
-    "Lines & Equations",
-    "Intercepts",
-    "Parallel & Perpendicular Lines",
-    "Graphs of Functions"
-  ],
-  "Geometry (2D)": [
-    "Lines & Angles",
-    "Triangles",
-    "Special Triangles",
-    "Polygons",
-    "Quadrilaterals",
-    "Area & Perimeter"
-  ],
-  "Geometry (3D)": [
-    "Volume",
-    "Surface Area",
-    "Solids"
-  ],
-  "Circles": [
-    "Arcs",
-    "Sectors",
-    "Chords",
-    "Tangents"
-  ],
-  "Data Analysis & Statistics": [
-    "Mean, Median, Mode",
-    "Weighted Average",
-    "Range & IQR",
-    "Standard Deviation",
-    "Charts & Graphs"
-  ],
-  "Sets & Logic": [
-    "Venn Diagrams",
-    "Overlapping Sets",
-    "Inclusion-Exclusion"
-  ],
-  "Combinatorics": [
-    "Counting Principles",
-    "Permutations",
-    "Combinations"
-  ],
-  "Probability": [
-    "Basic Probability",
-    "Independent Events",
-    "Mutually Exclusive Events",
-    "Conditional Probability",
-    "Expected Value"
-  ],
-  "Advanced Quant": [
-    "Mixed Concepts",
-    "Non-standard Problems",
-    "Strategy-based Questions"
-  ]
+const APP_CONFIG = {
+  Quant: {
+    topics: {
+      "Arithmetic": [
+        "Integers & Basic Operations", "Place Value", "Fractions & Decimals",
+        "Percents", "Ratios", "Averages"
+      ],
+      "Algebra": [
+        "Linear Equations", "Inequalities", "Systems of Equations",
+        "Exponents & Roots", "Algebraic Expressions"
+      ],
+      "Number Properties": [
+        "Divisibility", "Prime Numbers", "Factors & Multiples",
+        "LCM & GCF", "Remainders", "Units Digit"
+      ],
+      "Word Problems": [
+        "Basic Word Problems", "Rates & Work", "Mixtures",
+        "Two-variable Word Problems", "Variables in Choices"
+      ],
+      "Sequences & Functions": [
+        "Arithmetic Sequences", "Geometric Sequences", "Recursive Sequences",
+        "Functions", "Pattern Recognition"
+      ],
+      "Coordinate Geometry": [
+        "Slope", "Distance", "Midpoint", "Lines & Equations",
+        "Intercepts", "Parallel & Perpendicular Lines", "Graphs of Functions"
+      ],
+      "Geometry (2D)": [
+        "Lines & Angles", "Triangles", "Special Triangles",
+        "Polygons", "Quadrilaterals", "Area & Perimeter"
+      ],
+      "Geometry (3D)": ["Volume", "Surface Area", "Solids"],
+      "Circles": ["Arcs", "Sectors", "Chords", "Tangents"],
+      "Data Analysis & Statistics": [
+        "Mean, Median, Mode", "Weighted Average", "Range & IQR",
+        "Standard Deviation", "Charts & Graphs"
+      ],
+      "Sets & Logic": ["Venn Diagrams", "Overlapping Sets", "Inclusion-Exclusion"],
+      "Combinatorics": ["Counting Principles", "Permutations", "Combinations"],
+      "Probability": [
+        "Basic Probability", "Independent Events", "Mutually Exclusive Events",
+        "Conditional Probability", "Expected Value"
+      ],
+      "Advanced Quant": ["Mixed Concepts", "Non-standard Problems", "Strategy-based Questions"]
+    },
+    errorTypes: ["Silly Mistake","Concept Gap","Misread","Time Pressure","Formula Error","Other"],
+    storageKey: 'gre_errors_v3',
+    labels: { did: "What I Did", should: "What I Should've Done", root: "Root Cause" }
+  },
+  Verbal: {
+    topics: {
+      "Reading Comprehension": [
+        "Primary Purpose / Main Idea", "Detail / Specific Info", "Inference",
+        "Function / Structure", "Tone / Attitude", "Vocabulary in Context"
+      ],
+      "Text Completion": ["1-Blank", "2-Blank", "3-Blank"],
+      "Sentence Equivalence": ["Pairing Words", "Context Clues", "Contrast / Shift"],
+      "Critical Reasoning": [
+        "Strengthen / Weaken", "Assumption", "Paradox / Discrepancy", "Conclusion / Inference"
+      ]
+    },
+    errorTypes: ["Vocab Gap", "Misread Passage/Q", "Logic / Inference Error", "Fell for Trap", "Time Pressure", "Other"],
+    storageKey: 'gre_errors_verbal_v1',
+    labels: { did: "My Trap / Reasoning", should: "Correct Logic", root: "Key Vocab / Takeaway" }
+  }
 };
 
-const TOPICS = Object.keys(topicSubtopics);
-const ERROR_TYPES = ["Silly Mistake","Concept Gap","Misread","Time Pressure","Formula Error","Other"];
+let currentMode = localStorage.getItem('gre_current_mode') || 'Quant';
+function getCurrentConfig() { return APP_CONFIG[currentMode]; }
+
 const ETYPE_CLASS = {
-  "Silly Mistake":"etype-silly","Concept Gap":"etype-concept","Misread":"etype-misread",
-  "Time Pressure":"etype-time","Formula Error":"etype-formula","Other":"etype-other"
+  "Silly Mistake":"etype-silly", "Concept Gap":"etype-concept", "Misread":"etype-misread",
+  "Time Pressure":"etype-time", "Formula Error":"etype-formula", "Other":"etype-other",
+  "Vocab Gap":"etype-formula", "Misread Passage/Q":"etype-misread", "Logic / Inference Error":"etype-concept", "Fell for Trap":"etype-silly"
 };
 
 let rows = [];
 let inpImage = null;
 let showStarredOnly = false;
 
-function save() { try { localStorage.setItem('gre_errors_v3', JSON.stringify(rows)); } catch(e) {} }
-function load() { try { const d = localStorage.getItem('gre_errors_v3'); if(d) rows = JSON.parse(d); } catch(e) { rows=[]; } }
+function save() { try { localStorage.setItem(getCurrentConfig().storageKey, JSON.stringify(rows)); } catch(e) {} }
+function load() { try { const d = localStorage.getItem(getCurrentConfig().storageKey); if(d) rows = JSON.parse(d); else rows=[]; } catch(e) { rows=[]; } }
+
+function switchMode(mode) {
+  if (!APP_CONFIG[mode]) return;
+  currentMode = mode;
+  localStorage.setItem('gre_current_mode', mode);
+  
+  // UI Updates
+  document.getElementById('header-title-em').textContent = mode;
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('btn-mode-' + mode).classList.add('active');
+  
+  // Labels
+  const labels = getCurrentConfig().labels;
+  document.getElementById('th-did').textContent = labels.did;
+  document.getElementById('th-should').textContent = labels.should;
+  document.getElementById('th-root').textContent = labels.root;
+  document.getElementById('inp-did').placeholder = labels.did + "…";
+  document.getElementById('inp-should').placeholder = labels.should + "…";
+  document.getElementById('inp-root').placeholder = labels.root + "…";
+  
+  // Re-build dropdowns
+  buildTopicFilter();
+  buildInpTopics();
+  buildEtypeDropdowns();
+  
+  // Load data & Render
+  load();
+  renderTable();
+}
+
+function buildEtypeDropdowns() {
+  const etypes = getCurrentConfig().errorTypes;
+  
+  const filterSel = document.getElementById('filter-etype');
+  filterSel.innerHTML = '<option value="">All Error Types</option>' + 
+    etypes.map(t => `<option value="${escH(t)}">${escH(t)}</option>`).join('');
+    
+  const inpSel = document.getElementById('inp-etype');
+  inpSel.innerHTML = '<option value="">Error Type…</option>' + 
+    etypes.map(t => `<option value="${escH(t)}">${escH(t)}</option>`).join('');
+}
 
 function getFiltered() {
   const ft = document.getElementById('filter-topic').value;
@@ -1475,7 +1537,7 @@ function renderTable() {
       <td data-label="Error Type">
         <select class="cell-select ${ec}" onchange="updateField(${gi},'etype',this.value)">
           <option value="">—</option>
-          ${ERROR_TYPES.map(t=>`<option value="${t}" ${row.etype===t?'selected':''}>${t}</option>`).join('')}
+          ${getCurrentConfig().errorTypes.map(t=>`<option value="${escH(t)}" ${row.etype===t?'selected':''}>${escH(t)}</option>`).join('')}
         </select>
       </td>
       <td data-label="What I Did"><textarea class="cell-text" rows="1" onblur="updateField(${gi},'did',this.value)">${escH(row.did)}</textarea></td>
@@ -1545,7 +1607,7 @@ function addRow() {
 }
 
 function clearInput() {
-  document.getElementById('inp-topic').value = TOPICS[0];
+  document.getElementById('inp-topic').value = Object.keys(getCurrentConfig().topics)[0];
   updateInpSubtopics();
   ['inp-qnum','inp-did','inp-should','inp-root', 'inp-subtopic-other'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('inp-subtopic').style.display = 'block';
@@ -1562,7 +1624,7 @@ function clearInput() {
 function updateInpSubtopics() {
   const topic = document.getElementById('inp-topic').value;
   const subtopicSel = document.getElementById('inp-subtopic');
-  const subs = topicSubtopics[topic] || [];
+  const subs = getCurrentConfig().topics[topic] || [];
   subtopicSel.innerHTML = subs.map(s => `<option value="${escH(s)}">${escH(s)}</option>`).join('') + '<option value="Other">Other...</option>';
   
   // Reset visibility if topic changes
@@ -1684,7 +1746,7 @@ function updateThemeToggle(theme) {
 document.getElementById('theme-toggle').onclick = toggleTheme;
 
 initTheme();
-load(); buildTopicFilter(); buildInpTopics(); renderTable();
+switchMode(currentMode); // This loads data, builds all dropdowns, and renders table
 document.getElementById('inp-topic').focus();
 
 // ── PACE TRAINER LOGIC ──
