@@ -998,6 +998,7 @@
     transition: border-color 0.15s;
   }
   .pt-input:focus { border-color: var(--peach); }
+  .pt-input option { background: var(--surface); color: var(--text); }
   
   .pt-timer-display {
     background: var(--bg2);
@@ -1263,6 +1264,20 @@
         <div class="pt-config-group">
           <label class="pt-label">Questions</label>
           <input type="number" id="pt-inp-q" class="pt-input" value="20" min="1" max="200" oninput="ptConfigChanged()">
+        </div>
+      </div>
+      <div class="pt-config-row" style="margin-top: 12px;">
+        <div class="pt-config-group" style="flex: 2;">
+          <label class="pt-label">Alert Sound</label>
+          <select id="pt-inp-sound" class="pt-input" onchange="ptSaveSound()">
+            <option value="Classic Beep">Classic Beep</option>
+            <option value="Soft Chime">Soft Chime</option>
+            <option value="Digital Ping">Digital Ping</option>
+            <option value="Low Pulse">Low Pulse</option>
+          </select>
+        </div>
+        <div class="pt-config-group" style="flex: 1; justify-content: flex-end;">
+          <button class="btn" onclick="ptPreviewSound()" style="padding: 9px; justify-content: center; height: 36px; margin-top: auto;">▶ Preview</button>
         </div>
       </div>
     </div>
@@ -1689,25 +1704,74 @@ function ptInitAudio() {
   if (ptAudioCtx.state === 'suspended') ptAudioCtx.resume();
 }
 
-function ptPlayBeep(freq, type, duration) {
+const PT_SOUNDS = {
+  "Classic Beep": {
+    interval: () => ptPlayTone(600, 'sine', 0.05, 0.4),
+    completion: () => { ptPlayTone(400, 'sine', 0.05, 0.2); setTimeout(() => ptPlayTone(600, 'sine', 0.05, 0.4), 250); }
+  },
+  "Soft Chime": {
+    interval: () => ptPlayTone(880, 'triangle', 0.05, 0.6),
+    completion: () => { ptPlayTone(880, 'triangle', 0.05, 0.3); setTimeout(() => ptPlayTone(1108, 'triangle', 0.05, 0.8), 300); }
+  },
+  "Digital Ping": {
+    interval: () => ptPlayTone(1200, 'square', 0.01, 0.15),
+    completion: () => { ptPlayTone(1200, 'square', 0.01, 0.1); setTimeout(() => ptPlayTone(1600, 'square', 0.01, 0.2), 150); }
+  },
+  "Low Pulse": {
+    interval: () => ptPlayTone(300, 'sawtooth', 0.05, 0.3),
+    completion: () => { ptPlayTone(300, 'sawtooth', 0.05, 0.2); setTimeout(() => ptPlayTone(400, 'sawtooth', 0.05, 0.4), 250); }
+  }
+};
+
+function ptPlayTone(freq, type, attack, decay) {
   if (!ptAudioCtx) return;
   const osc = ptAudioCtx.createOscillator();
   const gain = ptAudioCtx.createGain();
   osc.type = type;
   osc.frequency.setValueAtTime(freq, ptAudioCtx.currentTime);
-  gain.gain.setValueAtTime(0.1, ptAudioCtx.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.001, ptAudioCtx.currentTime + duration);
+  
+  gain.gain.setValueAtTime(0, ptAudioCtx.currentTime);
+  gain.gain.linearRampToValueAtTime(0.1, ptAudioCtx.currentTime + attack);
+  gain.gain.exponentialRampToValueAtTime(0.001, ptAudioCtx.currentTime + attack + decay);
+  
   osc.connect(gain);
   gain.connect(ptAudioCtx.destination);
   osc.start();
-  osc.stop(ptAudioCtx.currentTime + duration);
+  osc.stop(ptAudioCtx.currentTime + attack + decay);
 }
 
-function ptPlayIntervalBeep() { ptPlayBeep(600, 'sine', 0.5); }
-function ptPlayCompletionBeep() { 
-  ptPlayBeep(400, 'sine', 0.3);
-  setTimeout(() => ptPlayBeep(600, 'sine', 0.4), 300);
+function ptGetSelectedSound() {
+  const sel = document.getElementById('pt-inp-sound');
+  return PT_SOUNDS[sel ? sel.value : "Classic Beep"] || PT_SOUNDS["Classic Beep"];
 }
+
+function ptPlayIntervalBeep() { 
+  ptInitAudio();
+  ptGetSelectedSound().interval(); 
+}
+
+function ptPlayCompletionBeep() { 
+  ptInitAudio();
+  ptGetSelectedSound().completion(); 
+}
+
+function ptPreviewSound() {
+  ptInitAudio();
+  ptGetSelectedSound().interval();
+}
+
+function ptSaveSound() {
+  const sel = document.getElementById('pt-inp-sound');
+  if (sel) localStorage.setItem('gre_pt_sound', sel.value);
+}
+
+function ptLoadSound() {
+  const saved = localStorage.getItem('gre_pt_sound');
+  const sel = document.getElementById('pt-inp-sound');
+  if (saved && sel) sel.value = saved;
+}
+
+ptLoadSound();
 
 function togglePaceTrainer() {
   const sidebar = document.getElementById('pt-sidebar');
