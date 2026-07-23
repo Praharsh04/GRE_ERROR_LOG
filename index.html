@@ -492,13 +492,74 @@
     box-shadow: inset 0 0 0 2.5px var(--peach) !important;
   }
 
-  .img-gallery {
+  /* Folder album stacked layout */
+  .img-cell-folder {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 4px;
-    flex-wrap: wrap;
+    gap: 8px;
     padding: 3px;
+  }
+
+  .img-stack {
+    position: relative;
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+  }
+  .img-stack::before,
+  .img-stack::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 6px;
+    border: 1.5px solid var(--border-dark);
+    background: var(--surface2);
+    z-index: 1;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+  }
+  .img-stack::before {
+    transform: rotate(-3deg) translate(-2px, -1px);
+    opacity: 0.85;
+  }
+  .img-stack::after {
+    transform: rotate(3deg) translate(2px, 1px);
+    opacity: 0.5;
+    z-index: 0;
+  }
+  .img-stack:hover::before {
+    transform: rotate(-6deg) translate(-4px, -2px);
+    opacity: 0.95;
+  }
+  .img-stack:hover::after {
+    transform: rotate(6deg) translate(4px, 2px);
+    opacity: 0.7;
+  }
+
+  .img-stack-top {
+    position: relative;
+    z-index: 2;
+    width: 32px;
+    height: 32px;
+    object-fit: cover;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 1.5px solid var(--border-dark);
+    display: block;
+    transition: transform 0.15s, box-shadow 0.15s;
+    background: var(--surface);
+  }
+  .img-stack:hover .img-stack-top {
+    transform: scale(1.05);
+    box-shadow: var(--shadow);
+  }
+
+  .img-container-single {
+    position: relative;
+    display: inline-block;
+    width: 32px;
+    height: 32px;
   }
 
   .img-thumb {
@@ -510,38 +571,24 @@
     border: 1.5px solid var(--border-dark);
     display: block;
     transition: transform 0.15s, box-shadow 0.15s;
+    background: var(--surface);
   }
-  .img-thumb:hover { transform: scale(1.12); box-shadow: var(--shadow); }
+  .img-thumb:hover { transform: scale(1.08); box-shadow: var(--shadow); }
 
-  .img-container {
-    position: relative;
-    display: inline-block;
-  }
-  .img-container:hover .img-delete-btn {
-    opacity: 1;
-  }
-  .img-delete-btn {
+  .img-count-badge {
     position: absolute;
-    top: -5px;
-    right: -5px;
-    width: 14px;
-    height: 14px;
-    background: rgba(0,0,0,0.6);
+    bottom: -3px;
+    right: -3px;
+    background: var(--peach);
     color: white;
-    border: none;
-    border-radius: 50%;
-    font-size: 9px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    opacity: 0;
-    transition: opacity 0.15s;
-    line-height: 1;
-    z-index: 10;
-  }
-  .img-delete-btn:hover {
-    background: #c44040;
+    font-size: 8px;
+    font-weight: 700;
+    border-radius: 8px;
+    padding: 1px 4px;
+    z-index: 3;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    pointer-events: none;
+    font-family: var(--font-mono);
   }
 
   .img-upload-btn {
@@ -558,26 +605,26 @@
   .img-upload-btn:hover { color: var(--peach); }
   .img-upload-btn input { display: none; }
 
-  .img-add-btn {
+  .img-add-btn-small {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 24px;
-    height: 24px;
-    border-radius: 4px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
     border: 1px dashed var(--border-dark);
     background: transparent;
     color: var(--text-muted);
     cursor: pointer;
-    font-size: 11px;
+    font-size: 10px;
     transition: all 0.15s;
   }
-  .img-add-btn:hover {
+  .img-add-btn-small:hover {
     border-color: var(--peach);
     color: var(--peach);
     background: var(--peach-faint);
   }
-  .img-add-btn input { display: none; }
+  .img-add-btn-small input { display: none; }
 
   /* Delete */
   .del-btn {
@@ -883,6 +930,29 @@
     background: rgba(255, 255, 255, 0.4);
     cursor: pointer;
     transition: background-color 0.2s;
+  }
+  
+  .modal-delete-btn {
+    position: absolute;
+    bottom: 20px;
+    right: 24px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: white;
+    padding: 6px 12px;
+    border-radius: var(--radius);
+    font-size: 11px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.2s;
+    z-index: 1010;
+  }
+  .modal-delete-btn:hover {
+    background: #c44040;
+    border-color: #c44040;
+    color: white;
   }
   .modal-dot.active {
     background: var(--peach);
@@ -1191,6 +1261,7 @@
   <img class="modal-img" id="modal-img-el" src="" alt="Question Image">
   <button class="modal-nav-btn next" id="modal-next-btn" onclick="navigateModal(1, event)">›</button>
   <div class="modal-dots" id="modal-dots-el"></div>
+  <button class="modal-delete-btn" id="modal-delete-btn" onclick="deleteModalImage(event)" title="Delete this image">🗑 Delete Image</button>
 </div>
 
 <script>
@@ -1343,6 +1414,7 @@ function renderTable() {
     const gi = rows.indexOf(row);
     const ec = ETYPE_CLASS[row.etype] || 'etype-other';
     const isStarred = row.starred ? true : false;
+    const imgs = getRowImages(row);
     
     return `<tr class="${isStarred ? 'starred-row' : ''}">
       <td class="star-cell ${isStarred ? 'starred' : 'unstarred'}" onclick="toggleStar(${gi})">
@@ -1371,18 +1443,24 @@ function renderTable() {
           ondragenter="handleCellDragEnter(event, this)"
           ondragleave="handleCellDragLeave(event, this)"
           ondrop="handleCellDrop(event, ${gi}, this)">
-        <div class="img-gallery">
-          ${getRowImages(row).map((img, imgIdx) => `
-            <div class="img-container">
-              <img class="img-thumb" src="${img}" onclick="openModal(${gi}, ${imgIdx})" alt="img">
-              <button class="img-delete-btn" onclick="deleteRowImage(event, ${gi}, ${imgIdx})" title="Remove image">✕</button>
-            </div>
-          `).join('')}
-          <label class="img-add-btn" title="Add image">
-            ＋
-            <input type="file" accept="image/*" multiple onchange="uploadRowImage(${gi}, this)">
-          </label>
-        </div>
+        ${imgs.length > 0
+          ? `<div class="img-cell-folder">
+               ${imgs.length > 1
+                 ? `<div class="img-stack">
+                      <img class="img-stack-top" src="${imgs[0]}" onclick="openModal(${gi}, 0)" alt="img">
+                      <span class="img-count-badge">${imgs.length}</span>
+                    </div>`
+                 : `<div class="img-container-single">
+                      <img class="img-thumb" src="${imgs[0]}" onclick="openModal(${gi}, 0)" alt="img">
+                    </div>`
+               }
+               <label class="img-add-btn-small" title="Add image">
+                 ＋
+                 <input type="file" accept="image/*" multiple onchange="uploadRowImage(${gi}, this)">
+               </label>
+             </div>`
+          : `<label class="img-upload-btn" title="Upload image">📎<input type="file" accept="image/*" multiple onchange="uploadRowImage(${gi}, this)"></label>`
+        }
       </td>
       <td><button class="del-btn" onclick="deleteRow(${gi})">✕</button></td>
     </tr>`;
@@ -1656,6 +1734,30 @@ function navigateModalTo(idx, e) {
   if (e) e.stopPropagation();
   modalImgIdx = idx;
   updateModalImage();
+}
+
+function deleteModalImage(e) {
+  if (e) e.stopPropagation();
+  if (confirm("Are you sure you want to delete this image?")) {
+    const row = rows[modalRowIdx];
+    const imgs = getRowImages(row);
+    imgs.splice(modalImgIdx, 1);
+    
+    row.images = imgs;
+    if ('image' in row) delete row.image;
+    
+    save();
+    renderTable();
+    
+    if (imgs.length === 0) {
+      document.getElementById('img-modal').classList.remove('open');
+    } else {
+      if (modalImgIdx >= imgs.length) {
+        modalImgIdx = imgs.length - 1;
+      }
+      updateModalImage();
+    }
+  }
 }
 
 function closeModal(e) {
