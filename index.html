@@ -398,11 +398,23 @@
     resize: none;
     overflow: hidden;
     white-space: nowrap;
-    cursor: pointer;
+    cursor: default;
     line-height: 1.4;
+  }
+  .cell-text:focus {
+    background: rgba(232,132,106,0.05);
+    cursor: text;
+    white-space: pre-wrap;
+    overflow: auto;
+    box-shadow: inset 0 0 0 2px var(--peach-light);
+    border-radius: 4px;
+    color: var(--text);
+  }
+  .cell-text-popup {
+    cursor: pointer;
     transition: background 0.12s;
   }
-  .cell-text:hover {
+  .cell-text-popup:hover {
     background: rgba(232,132,106,0.06);
   }
 
@@ -1539,18 +1551,18 @@ function renderTable() {
         ${isStarred ? '★' : '☆'}
       </td>
       <td class="row-num" data-label="#">${fi+1}</td>
-      <td data-label="Topic"><textarea class="cell-text topic-text" rows="1" onclick="openTextPopup(${gi},'topic','Topic',this)" readonly>${escH(row.topic)}</textarea></td>
-      <td data-label="Subtopic"><textarea class="cell-text" rows="1" onclick="openTextPopup(${gi},'subtopic','Subtopic',this)" readonly>${escH(row.subtopic)}</textarea></td>
-      <td data-label="Q#"><textarea class="cell-text" rows="1" onclick="openTextPopup(${gi},'qnum','Q#',this)" readonly>${escH(row.qnum)}</textarea></td>
+      <td data-label="Topic"><textarea class="cell-text topic-text" rows="1" onblur="updateField(${gi},'topic',this.value)">${escH(row.topic)}</textarea></td>
+      <td data-label="Subtopic"><textarea class="cell-text" rows="1" onblur="updateField(${gi},'subtopic',this.value)">${escH(row.subtopic)}</textarea></td>
+      <td data-label="Q#"><textarea class="cell-text" rows="1" onblur="updateField(${gi},'qnum',this.value)">${escH(row.qnum)}</textarea></td>
       <td data-label="Error Type">
         <select class="cell-select ${ec}" onchange="updateField(${gi},'etype',this.value)">
           <option value="">—</option>
           ${ERROR_TYPES.map(t=>`<option value="${t}" ${row.etype===t?'selected':''}>${t}</option>`).join('')}
         </select>
       </td>
-      <td data-label="What I Did"><textarea class="cell-text" rows="1" onclick="openTextPopup(${gi},'did','What I Did',this)" readonly>${escH(row.did)}</textarea></td>
-      <td data-label="What I Should've Done"><textarea class="cell-text" rows="1" onclick="openTextPopup(${gi},'should','What I Should\'ve Done',this)" readonly>${escH(row.should)}</textarea></td>
-      <td data-label="Root Cause"><textarea class="cell-text" rows="1" onclick="openTextPopup(${gi},'root','Root Cause',this)" readonly>${escH(row.root)}</textarea></td>
+      <td data-label="What I Did"><textarea class="cell-text cell-text-popup" rows="1" onclick="openTextPopup(${gi},'did','What I Did',this)" readonly>${escH(row.did)}</textarea></td>
+      <td data-label="What I Should've Done"><textarea class="cell-text cell-text-popup" rows="1" onclick="openTextPopup(${gi},'should','What I Should\'ve Done',this)" readonly>${escH(row.should)}</textarea></td>
+      <td data-label="Root Cause"><textarea class="cell-text" rows="1" onblur="updateField(${gi},'root',this.value)">${escH(row.root)}</textarea></td>
       <td data-label="Review">
         <div class="review-pill ${row.review==='Reviewed'?'reviewed':'not-reviewed'}" onclick="toggleReview(${gi})">
           ${row.review==='Reviewed'?'✓ Done':'✗ Pending'}
