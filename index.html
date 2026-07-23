@@ -962,109 +962,123 @@
     color: white;
   }
   .modal-dot.active {
+    background: var(--peach);
+  }
 
-  /* ── TEXT POPUP MODAL ── */
+  /* ── TEXT READING DIALOG ── */
+  body.text-modal-open { overflow: hidden; }
+
   .text-modal-overlay {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.6);
+    background: rgba(0,0,0,0.55);
     z-index: 1000;
     align-items: center;
     justify-content: center;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    animation: textModalFadeIn 0.2s ease;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
   }
-  .text-modal-overlay.open { display: flex; }
-  @keyframes textModalFadeIn {
+  .text-modal-overlay.open {
+    display: flex;
+    animation: tmOverlayIn 0.2s ease;
+  }
+  @keyframes tmOverlayIn {
     from { opacity: 0; }
     to { opacity: 1; }
   }
-  @keyframes textModalSlideUp {
-    from { opacity: 0; transform: translateY(24px) scale(0.97); }
+  @keyframes tmBoxIn {
+    from { opacity: 0; transform: translateY(20px) scale(0.96); }
     to { opacity: 1; transform: translateY(0) scale(1); }
   }
+
   .text-modal-box {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 16px;
     box-shadow: var(--shadow-lg);
-    width: 90vw;
-    max-width: 560px;
-    max-height: 70vh;
+    width: 80vw;
+    max-width: 720px;
+    height: 75vh;
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    animation: textModalSlideUp 0.25s cubic-bezier(0.4,0,0.2,1);
+    animation: tmBoxIn 0.25s cubic-bezier(0.4,0,0.2,1);
   }
+
+  /* Header */
   .text-modal-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 16px 20px 12px;
+    padding: 14px 24px;
     border-bottom: 1px solid var(--border);
     background: var(--bg2);
+    flex-shrink: 0;
   }
   .text-modal-header-left {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 16px;
   }
   .text-modal-title {
     font-family: var(--font-serif);
-    font-size: 16px;
+    font-size: 17px;
     color: var(--peach);
     letter-spacing: -0.2px;
   }
   .text-modal-font-controls {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 2px;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 20px;
-    padding: 2px 4px;
+    padding: 3px 5px;
   }
   .font-size-btn {
-    width: 26px;
-    height: 26px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
     border: none;
     background: transparent;
     color: var(--text-mid);
     font-family: var(--font-sans);
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.15s;
+    user-select: none;
   }
   .font-size-btn:hover {
     background: var(--peach-faint);
     color: var(--peach);
   }
-  .font-size-btn:active {
-    transform: scale(0.92);
-  }
+  .font-size-btn:active { transform: scale(0.9); }
   .font-size-label {
     font-family: var(--font-mono);
-    font-size: 10px;
+    font-size: 10.5px;
     color: var(--text-muted);
-    min-width: 30px;
+    min-width: 34px;
     text-align: center;
     user-select: none;
   }
+  .text-modal-header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
   .text-modal-close {
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     border: 1px solid var(--border);
     background: var(--surface);
     color: var(--text-mid);
-    font-size: 13px;
+    font-size: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1076,44 +1090,78 @@
     color: white;
     border-color: var(--peach);
   }
+
+  /* Body — textarea fills the space */
   .text-modal-body {
-    padding: 20px;
-    overflow-y: auto;
     flex: 1;
+    display: flex;
+    padding: 24px;
+    overflow: hidden;
+    min-height: 0;
   }
   .text-modal-content {
     width: 100%;
-    min-height: 120px;
-    max-height: 50vh;
+    height: 100%;
     background: var(--bg2);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
-    padding: 16px;
+    padding: 24px 28px;
     color: var(--text);
     font-family: var(--font-sans);
-    font-size: 14px;
-    line-height: 1.7;
-    resize: vertical;
+    font-size: 16px;
+    line-height: 1.8;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+    resize: none;
     outline: none;
+    overflow-y: auto;
     transition: border-color 0.15s, box-shadow 0.15s;
   }
   .text-modal-content:focus {
     border-color: var(--peach-light);
-    box-shadow: 0 0 0 3px rgba(232,132,106,0.12);
+    box-shadow: 0 0 0 3px rgba(232,132,106,0.10);
   }
+
+  /* Footer */
   .text-modal-footer {
-    padding: 12px 20px;
+    padding: 12px 24px;
     border-top: 1px solid var(--border);
     display: flex;
-    justify-content: flex-end;
-    gap: 8px;
+    align-items: center;
+    justify-content: space-between;
     background: var(--bg2);
+    flex-shrink: 0;
+  }
+  .text-modal-status {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-faint);
+    letter-spacing: 0.5px;
   }
   .text-modal-footer .btn {
     font-size: 12px;
-    padding: 7px 18px;
+    padding: 7px 20px;
   }
-    background: var(--peach);
+
+  @media (max-width: 768px) {
+    .text-modal-box {
+      width: 95vw;
+      height: 80vh;
+      border-radius: 12px;
+    }
+    .text-modal-body {
+      padding: 16px;
+    }
+    .text-modal-content {
+      padding: 16px;
+    }
+    .text-modal-header {
+      padding: 12px 16px;
+    }
+    .text-modal-footer {
+      padding: 10px 16px;
+    }
   }
 
   /* Scrollbar */
@@ -1422,26 +1470,28 @@
   <button class="modal-delete-btn" id="modal-delete-btn" onclick="deleteModalImage(event)" title="Delete this image">🗑 Delete Image</button>
 </div>
 
-<!-- TEXT POPUP MODAL -->
-<div class="text-modal-overlay" id="text-modal" onclick="closeTextModal(event)">
+<!-- TEXT READING DIALOG -->
+<div class="text-modal-overlay" id="text-modal" onclick="handleTextOverlayClick(event)">
   <div class="text-modal-box" onclick="event.stopPropagation()">
     <div class="text-modal-header">
       <div class="text-modal-header-left">
         <span class="text-modal-title" id="text-modal-title">Field</span>
         <div class="text-modal-font-controls">
-          <button class="font-size-btn" onclick="changeTextModalFontSize(-2)" title="Decrease font">A−</button>
-          <span class="font-size-label" id="font-size-label">14px</span>
-          <button class="font-size-btn" onclick="changeTextModalFontSize(2)" title="Increase font">A+</button>
+          <button class="font-size-btn" onclick="changeTextModalFontSize(-2)" title="Decrease font size">A−</button>
+          <span class="font-size-label" id="font-size-label">16px</span>
+          <button class="font-size-btn" onclick="changeTextModalFontSize(2)" title="Increase font size">A+</button>
         </div>
       </div>
-      <button class="text-modal-close" onclick="closeTextModal()" title="Close">✕</button>
+      <div class="text-modal-header-right">
+        <button class="text-modal-close" onclick="dismissTextModal()" title="Close">✕</button>
+      </div>
     </div>
     <div class="text-modal-body">
-      <textarea class="text-modal-content" id="text-modal-content"></textarea>
+      <textarea class="text-modal-content" id="text-modal-content" oninput="onTextModalInput()"></textarea>
     </div>
     <div class="text-modal-footer">
-      <button class="btn" onclick="closeTextModal()">Close</button>
-      <button class="btn btn-primary" onclick="saveTextModal()">Save</button>
+      <span class="text-modal-status" id="text-modal-status">Auto-saved</span>
+      <button class="btn" onclick="dismissTextModal()">Close</button>
     </div>
   </div>
 </div>
@@ -1947,59 +1997,115 @@ function closeModal(e) {
     document.getElementById('img-modal').classList.remove('open');
 }
 
-// ── TEXT POPUP MODAL LOGIC ──
+// ── TEXT READING DIALOG LOGIC ──
 let textModalRowIdx = null;
 let textModalField = null;
-let textModalFontSize = parseInt(localStorage.getItem('gre_text_modal_font') || '14');
+let textModalFontSize = parseInt(localStorage.getItem('gre_text_modal_font') || '16');
+let textModalSaveTimer = null;
 
 function applyTextModalFontSize() {
   const el = document.getElementById('text-modal-content');
-  el.style.fontSize = textModalFontSize + 'px';
-  document.getElementById('font-size-label').textContent = textModalFontSize + 'px';
+  if (el) {
+    el.style.fontSize = textModalFontSize + 'px';
+    // Scale line-height proportionally
+    el.style.lineHeight = textModalFontSize <= 16 ? '1.8' : '1.7';
+  }
+  const label = document.getElementById('font-size-label');
+  if (label) label.textContent = textModalFontSize + 'px';
 }
 
 function changeTextModalFontSize(delta) {
   textModalFontSize = Math.max(12, Math.min(28, textModalFontSize + delta));
-  localStorage.setItem('gre_text_modal_font', textModalFontSize);
+  localStorage.setItem('gre_text_modal_font', String(textModalFontSize));
   applyTextModalFontSize();
 }
 
 function openTextPopup(gi, field, label, el) {
   textModalRowIdx = gi;
   textModalField = field;
+
   document.getElementById('text-modal-title').textContent = label;
-  document.getElementById('text-modal-content').value = rows[gi][field] || '';
+
+  const contentEl = document.getElementById('text-modal-content');
+  contentEl.value = rows[gi][field] || '';
+
   applyTextModalFontSize();
+
+  document.getElementById('text-modal-status').textContent = 'Auto-saved';
+
+  // Lock background scroll
+  document.body.classList.add('text-modal-open');
+
+  // Show modal
   document.getElementById('text-modal').classList.add('open');
-  // Auto-focus the textarea after a tick for smooth animation
-  setTimeout(() => document.getElementById('text-modal-content').focus(), 80);
+
+  // Focus the editor after the animation settles
+  setTimeout(() => {
+    contentEl.focus();
+    // Move cursor to end
+    contentEl.selectionStart = contentEl.selectionEnd = contentEl.value.length;
+  }, 100);
 }
 
-function saveTextModal() {
+function onTextModalInput() {
+  // Live auto-save with debounce
+  const statusEl = document.getElementById('text-modal-status');
+  statusEl.textContent = 'Saving…';
+
+  clearTimeout(textModalSaveTimer);
+  textModalSaveTimer = setTimeout(() => {
+    if (textModalRowIdx !== null && textModalField) {
+      rows[textModalRowIdx][textModalField] = document.getElementById('text-modal-content').value;
+      save();
+      statusEl.textContent = 'Auto-saved';
+    }
+  }, 400);
+}
+
+function dismissTextModal() {
+  // Final save
   if (textModalRowIdx !== null && textModalField) {
+    clearTimeout(textModalSaveTimer);
     rows[textModalRowIdx][textModalField] = document.getElementById('text-modal-content').value;
     save();
     renderTable();
   }
+
+  // Unlock background scroll
+  document.body.classList.remove('text-modal-open');
+
   document.getElementById('text-modal').classList.remove('open');
+  textModalRowIdx = null;
+  textModalField = null;
 }
 
-function closeTextModal(e) {
-  if (e && e.target !== document.getElementById('text-modal')) return;
-  // Auto-save on close
-  if (textModalRowIdx !== null && textModalField) {
-    rows[textModalRowIdx][textModalField] = document.getElementById('text-modal-content').value;
-    save();
-    renderTable();
+function handleTextOverlayClick(e) {
+  // Close only when clicking the dark overlay itself, not the box
+  if (e.target === document.getElementById('text-modal')) {
+    dismissTextModal();
   }
-  document.getElementById('text-modal').classList.remove('open');
 }
 
 document.addEventListener('keydown', e => {
-  // Close text modal on Escape
+  // Text reading dialog: Escape to close, trap focus inside
   if (document.getElementById('text-modal').classList.contains('open')) {
     if (e.key === 'Escape') {
-      closeTextModal();
+      e.preventDefault();
+      dismissTextModal();
+    }
+    // Trap Tab focus inside the modal
+    if (e.key === 'Tab') {
+      const modal = document.querySelector('.text-modal-box');
+      const focusable = modal.querySelectorAll('button, textarea, [tabindex]');
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
     }
     return;
   }
