@@ -1193,7 +1193,7 @@
   <div id="empty-state" class="empty-state" style="display:none;">
     <div class="empty-icon">📋</div>
     <h3>No errors logged yet</h3>
-    <p>Use the entry row below — press Enter or click Add Row to begin.</p>
+    <p>Use the entry row below — click Add Row to begin.</p>
   </div>
 </div>
 
@@ -1778,9 +1778,7 @@ document.addEventListener('keydown', e => {
   }
   
   const inpIds = ['inp-topic','inp-subtopic','inp-subtopic-other','inp-qnum','inp-etype','inp-did','inp-should','inp-root','inp-review'];
-  if (e.key==='Enter' && !e.shiftKey && inpIds.includes(document.activeElement?.id)) {
-    e.preventDefault(); addRow();
-  }
+
 });
 
 function buildTopicFilter() {

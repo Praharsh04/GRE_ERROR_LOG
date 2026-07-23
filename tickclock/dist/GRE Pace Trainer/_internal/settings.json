@@ -1,0 +1,13 @@
+{
+  "interval_minutes": 3,
+  "interval_seconds": 0,
+  "question_count": 20,
+  "always_on_top": true,
+  "sound_enabled": true,
+  "notifications_enabled": true,
+  "volume": 80,
+  "window_x": 558,
+  "window_y": 88,
+  "popup_x": 0,
+  "popup_y": 0
+}
