@@ -483,6 +483,15 @@
   .etype-other   { color: var(--text-mid); }
 
   /* Image */
+  .img-cell {
+    position: relative;
+    transition: background-color 0.15s, box-shadow 0.15s;
+  }
+  .img-cell.drag-over {
+    background-color: var(--peach-faint) !important;
+    box-shadow: inset 0 0 0 2.5px var(--peach) !important;
+  }
+
   .img-thumb {
     width: 34px;
     height: 34px;
@@ -495,6 +504,38 @@
     transition: transform 0.15s, box-shadow 0.15s;
   }
   .img-thumb:hover { transform: scale(1.12); box-shadow: var(--shadow); }
+
+  .img-container {
+    position: relative;
+    display: inline-block;
+    margin: 3px auto;
+  }
+  .img-container:hover .img-delete-btn {
+    opacity: 1;
+  }
+  .img-delete-btn {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 14px;
+    height: 14px;
+    background: rgba(0,0,0,0.6);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.15s;
+    line-height: 1;
+    z-index: 10;
+  }
+  .img-delete-btn:hover {
+    background: #c44040;
+  }
 
   .img-upload-btn {
     display: flex;
@@ -1211,10 +1252,17 @@ function renderTable() {
           ${row.review==='Reviewed'?'✓ Done':'✗ Pending'}
         </div>
       </td>
-      <td data-label="Image" style="text-align:center;">
+      <td data-label="Image" class="img-cell" style="text-align:center;"
+          ondragover="handleCellDragOver(event)"
+          ondragenter="handleCellDragEnter(event, this)"
+          ondragleave="handleCellDragLeave(event, this)"
+          ondrop="handleCellDrop(event, ${gi}, this)">
         ${row.image
-          ? `<img class="img-thumb" src="${row.image}" onclick="openModal(${gi})" alt="img">`
-          : `<label class="img-upload-btn" title="Upload image">📎<input type="file" accept="image/*" onchange="handleInpImage(this)"></label>`
+          ? `<div class="img-container">
+               <img class="img-thumb" src="${row.image}" onclick="openModal(${gi})" alt="img">
+               <button class="img-delete-btn" onclick="deleteRowImage(event, ${gi})" title="Remove image">✕</button>
+             </div>`
+          : `<label class="img-upload-btn" title="Upload image">📎<input type="file" accept="image/*" onchange="uploadRowImage(${gi}, this)"></label>`
         }
       </td>
       <td><button class="del-btn" onclick="deleteRow(${gi})">✕</button></td>
@@ -1245,6 +1293,50 @@ function uploadRowImage(i, input) {
   const r = new FileReader();
   r.onload = e => { rows[i].image = e.target.result; save(); renderTable(); };
   r.readAsDataURL(f);
+}
+
+function handleCellDragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'copy';
+}
+
+function handleCellDragEnter(e, cell) {
+  e.preventDefault();
+  cell.classList.add('drag-over');
+}
+
+function handleCellDragLeave(e, cell) {
+  if (!cell.contains(e.relatedTarget)) {
+    cell.classList.remove('drag-over');
+  }
+}
+
+function handleCellDrop(e, gi, cell) {
+  e.preventDefault();
+  cell.classList.remove('drag-over');
+  
+  const files = e.dataTransfer.files;
+  if (files && files.length > 0) {
+    const file = files[0];
+    if (file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        rows[gi].image = event.target.result;
+        save();
+        renderTable();
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+}
+
+function deleteRowImage(e, gi) {
+  e.stopPropagation();
+  if (confirm("Are you sure you want to remove this image?")) {
+    rows[gi].image = null;
+    save();
+    renderTable();
+  }
 }
 
 function addRow() {
