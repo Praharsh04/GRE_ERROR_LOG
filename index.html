@@ -1663,7 +1663,7 @@ function renderTable() {
         </select>
       </td>
       <td data-label="What I Did"><textarea class="cell-text cell-text-popup" rows="1" onclick="openTextPopup(${gi},'did','What I Did',this)" readonly>${escH(row.did)}</textarea></td>
-      <td data-label="What I Should've Done"><textarea class="cell-text cell-text-popup" rows="1" onclick="openTextPopup(${gi},'should','What I Should\'ve Done',this)" readonly>${escH(row.should)}</textarea></td>
+      <td data-label="What I Should've Done"><textarea class="cell-text cell-text-popup" rows="1" onclick="openTextPopup(${gi},'should','What I Should&#39;ve Done',this)" readonly>${escH(row.should)}</textarea></td>
       <td data-label="Root Cause"><textarea class="cell-text" rows="1" onblur="updateField(${gi},'root',this.value)">${escH(row.root)}</textarea></td>
       <td data-label="Review">
         <div class="review-pill ${row.review==='Reviewed'?'reviewed':'not-reviewed'}" onclick="toggleReview(${gi})">
