@@ -1006,11 +1006,56 @@
     border-bottom: 1px solid var(--border);
     background: var(--bg2);
   }
+  .text-modal-header-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
   .text-modal-title {
     font-family: var(--font-serif);
     font-size: 16px;
     color: var(--peach);
     letter-spacing: -0.2px;
+  }
+  .text-modal-font-controls {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2px 4px;
+  }
+  .font-size-btn {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: var(--text-mid);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+  .font-size-btn:hover {
+    background: var(--peach-faint);
+    color: var(--peach);
+  }
+  .font-size-btn:active {
+    transform: scale(0.92);
+  }
+  .font-size-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    min-width: 30px;
+    text-align: center;
+    user-select: none;
   }
   .text-modal-close {
     width: 30px;
@@ -1381,7 +1426,14 @@
 <div class="text-modal-overlay" id="text-modal" onclick="closeTextModal(event)">
   <div class="text-modal-box" onclick="event.stopPropagation()">
     <div class="text-modal-header">
-      <span class="text-modal-title" id="text-modal-title">Field</span>
+      <div class="text-modal-header-left">
+        <span class="text-modal-title" id="text-modal-title">Field</span>
+        <div class="text-modal-font-controls">
+          <button class="font-size-btn" onclick="changeTextModalFontSize(-2)" title="Decrease font">A−</button>
+          <span class="font-size-label" id="font-size-label">14px</span>
+          <button class="font-size-btn" onclick="changeTextModalFontSize(2)" title="Increase font">A+</button>
+        </div>
+      </div>
       <button class="text-modal-close" onclick="closeTextModal()" title="Close">✕</button>
     </div>
     <div class="text-modal-body">
@@ -1898,12 +1950,26 @@ function closeModal(e) {
 // ── TEXT POPUP MODAL LOGIC ──
 let textModalRowIdx = null;
 let textModalField = null;
+let textModalFontSize = parseInt(localStorage.getItem('gre_text_modal_font') || '14');
+
+function applyTextModalFontSize() {
+  const el = document.getElementById('text-modal-content');
+  el.style.fontSize = textModalFontSize + 'px';
+  document.getElementById('font-size-label').textContent = textModalFontSize + 'px';
+}
+
+function changeTextModalFontSize(delta) {
+  textModalFontSize = Math.max(12, Math.min(28, textModalFontSize + delta));
+  localStorage.setItem('gre_text_modal_font', textModalFontSize);
+  applyTextModalFontSize();
+}
 
 function openTextPopup(gi, field, label, el) {
   textModalRowIdx = gi;
   textModalField = field;
   document.getElementById('text-modal-title').textContent = label;
   document.getElementById('text-modal-content').value = rows[gi][field] || '';
+  applyTextModalFontSize();
   document.getElementById('text-modal').classList.add('open');
   // Auto-focus the textarea after a tick for smooth animation
   setTimeout(() => document.getElementById('text-modal-content').focus(), 80);
