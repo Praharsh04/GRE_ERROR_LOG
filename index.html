@@ -398,17 +398,12 @@
     resize: none;
     overflow: hidden;
     white-space: nowrap;
-    cursor: default;
+    cursor: pointer;
     line-height: 1.4;
+    transition: background 0.12s;
   }
-  .cell-text:focus {
-    background: rgba(232,132,106,0.05);
-    cursor: text;
-    white-space: pre-wrap;
-    overflow: auto;
-    box-shadow: inset 0 0 0 2px var(--peach-light);
-    border-radius: 4px;
-    color: var(--text);
+  .cell-text:hover {
+    background: rgba(232,132,106,0.06);
   }
 
   .cell-select {
@@ -955,6 +950,112 @@
     color: white;
   }
   .modal-dot.active {
+
+  /* ── TEXT POPUP MODAL ── */
+  .text-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    animation: textModalFadeIn 0.2s ease;
+  }
+  .text-modal-overlay.open { display: flex; }
+  @keyframes textModalFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes textModalSlideUp {
+    from { opacity: 0; transform: translateY(24px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .text-modal-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: var(--shadow-lg);
+    width: 90vw;
+    max-width: 560px;
+    max-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: textModalSlideUp 0.25s cubic-bezier(0.4,0,0.2,1);
+  }
+  .text-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px 12px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg2);
+  }
+  .text-modal-title {
+    font-family: var(--font-serif);
+    font-size: 16px;
+    color: var(--peach);
+    letter-spacing: -0.2px;
+  }
+  .text-modal-close {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-mid);
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .text-modal-close:hover {
+    background: var(--peach);
+    color: white;
+    border-color: var(--peach);
+  }
+  .text-modal-body {
+    padding: 20px;
+    overflow-y: auto;
+    flex: 1;
+  }
+  .text-modal-content {
+    width: 100%;
+    min-height: 120px;
+    max-height: 50vh;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.7;
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .text-modal-content:focus {
+    border-color: var(--peach-light);
+    box-shadow: 0 0 0 3px rgba(232,132,106,0.12);
+  }
+  .text-modal-footer {
+    padding: 12px 20px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    background: var(--bg2);
+  }
+  .text-modal-footer .btn {
+    font-size: 12px;
+    padding: 7px 18px;
+  }
     background: var(--peach);
   }
 
@@ -1264,6 +1365,23 @@
   <button class="modal-delete-btn" id="modal-delete-btn" onclick="deleteModalImage(event)" title="Delete this image">🗑 Delete Image</button>
 </div>
 
+<!-- TEXT POPUP MODAL -->
+<div class="text-modal-overlay" id="text-modal" onclick="closeTextModal(event)">
+  <div class="text-modal-box" onclick="event.stopPropagation()">
+    <div class="text-modal-header">
+      <span class="text-modal-title" id="text-modal-title">Field</span>
+      <button class="text-modal-close" onclick="closeTextModal()" title="Close">✕</button>
+    </div>
+    <div class="text-modal-body">
+      <textarea class="text-modal-content" id="text-modal-content"></textarea>
+    </div>
+    <div class="text-modal-footer">
+      <button class="btn" onclick="closeTextModal()">Close</button>
+      <button class="btn btn-primary" onclick="saveTextModal()">Save</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // 🔹 Topic → Subtopic Mapping (Provided by User)
 const topicSubtopics = {
@@ -1421,18 +1539,18 @@ function renderTable() {
         ${isStarred ? '★' : '☆'}
       </td>
       <td class="row-num" data-label="#">${fi+1}</td>
-      <td data-label="Topic"><textarea class="cell-text topic-text" rows="1" onblur="updateField(${gi},'topic',this.value)">${escH(row.topic)}</textarea></td>
-      <td data-label="Subtopic"><textarea class="cell-text" rows="1" onblur="updateField(${gi},'subtopic',this.value)">${escH(row.subtopic)}</textarea></td>
-      <td data-label="Q#"><textarea class="cell-text" rows="1" onblur="updateField(${gi},'qnum',this.value)">${escH(row.qnum)}</textarea></td>
+      <td data-label="Topic"><textarea class="cell-text topic-text" rows="1" onclick="openTextPopup(${gi},'topic','Topic',this)" readonly>${escH(row.topic)}</textarea></td>
+      <td data-label="Subtopic"><textarea class="cell-text" rows="1" onclick="openTextPopup(${gi},'subtopic','Subtopic',this)" readonly>${escH(row.subtopic)}</textarea></td>
+      <td data-label="Q#"><textarea class="cell-text" rows="1" onclick="openTextPopup(${gi},'qnum','Q#',this)" readonly>${escH(row.qnum)}</textarea></td>
       <td data-label="Error Type">
         <select class="cell-select ${ec}" onchange="updateField(${gi},'etype',this.value)">
           <option value="">—</option>
           ${ERROR_TYPES.map(t=>`<option value="${t}" ${row.etype===t?'selected':''}>${t}</option>`).join('')}
         </select>
       </td>
-      <td data-label="What I Did"><textarea class="cell-text" rows="1" onblur="updateField(${gi},'did',this.value)">${escH(row.did)}</textarea></td>
-      <td data-label="What I Should've Done"><textarea class="cell-text" rows="1" onblur="updateField(${gi},'should',this.value)">${escH(row.should)}</textarea></td>
-      <td data-label="Root Cause"><textarea class="cell-text" rows="1" onblur="updateField(${gi},'root',this.value)">${escH(row.root)}</textarea></td>
+      <td data-label="What I Did"><textarea class="cell-text" rows="1" onclick="openTextPopup(${gi},'did','What I Did',this)" readonly>${escH(row.did)}</textarea></td>
+      <td data-label="What I Should've Done"><textarea class="cell-text" rows="1" onclick="openTextPopup(${gi},'should','What I Should\'ve Done',this)" readonly>${escH(row.should)}</textarea></td>
+      <td data-label="Root Cause"><textarea class="cell-text" rows="1" onclick="openTextPopup(${gi},'root','Root Cause',this)" readonly>${escH(row.root)}</textarea></td>
       <td data-label="Review">
         <div class="review-pill ${row.review==='Reviewed'?'reviewed':'not-reviewed'}" onclick="toggleReview(${gi})">
           ${row.review==='Reviewed'?'✓ Done':'✗ Pending'}
@@ -1765,7 +1883,49 @@ function closeModal(e) {
     document.getElementById('img-modal').classList.remove('open');
 }
 
+// ── TEXT POPUP MODAL LOGIC ──
+let textModalRowIdx = null;
+let textModalField = null;
+
+function openTextPopup(gi, field, label, el) {
+  textModalRowIdx = gi;
+  textModalField = field;
+  document.getElementById('text-modal-title').textContent = label;
+  document.getElementById('text-modal-content').value = rows[gi][field] || '';
+  document.getElementById('text-modal').classList.add('open');
+  // Auto-focus the textarea after a tick for smooth animation
+  setTimeout(() => document.getElementById('text-modal-content').focus(), 80);
+}
+
+function saveTextModal() {
+  if (textModalRowIdx !== null && textModalField) {
+    rows[textModalRowIdx][textModalField] = document.getElementById('text-modal-content').value;
+    save();
+    renderTable();
+  }
+  document.getElementById('text-modal').classList.remove('open');
+}
+
+function closeTextModal(e) {
+  if (e && e.target !== document.getElementById('text-modal')) return;
+  // Auto-save on close
+  if (textModalRowIdx !== null && textModalField) {
+    rows[textModalRowIdx][textModalField] = document.getElementById('text-modal-content').value;
+    save();
+    renderTable();
+  }
+  document.getElementById('text-modal').classList.remove('open');
+}
+
 document.addEventListener('keydown', e => {
+  // Close text modal on Escape
+  if (document.getElementById('text-modal').classList.contains('open')) {
+    if (e.key === 'Escape') {
+      closeTextModal();
+    }
+    return;
+  }
+
   if (document.getElementById('img-modal').classList.contains('open')) {
     if (e.key === 'Escape') {
       document.getElementById('img-modal').classList.remove('open');
