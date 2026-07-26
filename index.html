@@ -1337,6 +1337,8 @@
   <input type="file" id="import-json-file" accept=".json" style="display:none;" onchange="importJSON(this)">
   <label for="import-json-file" class="btn btn-primary" style="margin-left:4px; margin-bottom: 0;">↑ Import JSON</label>
   <button class="btn btn-primary" onclick="exportCSV()" style="margin-left:4px;">↓ Export CSV</button>
+  <input type="file" id="import-zip-file" accept=".zip" style="display:none;" onchange="importZIP(this)">
+  <label for="import-zip-file" class="btn btn-primary" style="margin-left:4px; margin-bottom: 0;">↑ Import ZIP</label>
 </header>
 
 <!-- FILTER BAR -->
@@ -2244,6 +2246,108 @@ function importJSON(input) {
   };
   reader.readAsText(file);
   input.value = ''; // Reset input so the same file can be imported again if needed
+}
+
+async function importZIP(input) {
+  const file = input.files[0];
+  if (!file) return;
+  
+  try {
+    const zip = await JSZip.loadAsync(file);
+    let csvContent = "";
+    
+    // Find the CSV file in the root of the zip
+    for (let filename of Object.keys(zip.files)) {
+      if (filename.endsWith('.csv') && !filename.includes('/')) {
+        csvContent = await zip.file(filename).async("string");
+        break;
+      }
+    }
+    
+    if (!csvContent) {
+      alert("No CSV file found in the ZIP.");
+      input.value = '';
+      return;
+    }
+
+    function parseCSVLine(text) {
+      let ret = [];
+      let inQuote = false;
+      let val = '';
+      for (let i = 0; i < text.length; i++) {
+        let c = text[i];
+        if (inQuote) {
+          if (c === '"') {
+            if (i + 1 < text.length && text[i+1] === '"') { val += '"'; i++; }
+            else { inQuote = false; }
+          } else { val += c; }
+        } else {
+          if (c === '"') { inQuote = true; }
+          else if (c === ',') { ret.push(val); val = ''; }
+          else { val += c; }
+        }
+      }
+      ret.push(val);
+      return ret;
+    }
+    
+    const lines = csvContent.split(/\r?\n/).filter(l => l.trim() !== "");
+    const newRows = [];
+    
+    for (let i = 1; i < lines.length; i++) {
+      const cols = parseCSVLine(lines[i]);
+      if (cols.length < 10) continue;
+      
+      const r = {
+        starred: cols[0] === 'Y',
+        topic: cols[2],
+        subtopic: cols[3],
+        qnum: cols[4],
+        etype: cols[5],
+        did: cols[6],
+        should: cols[7],
+        root: cols[8],
+        review: cols[9],
+      };
+      
+      const topicStr = (r.topic || 'UnknownTopic').trim();
+      const subtopicStr = (r.subtopic || 'UnknownSubtopic').trim();
+      const qnumStr = (r.qnum || `row${i}`).trim();
+      
+      let rawName = `${topicStr}_${subtopicStr}_${qnumStr}`;
+      let safeName = rawName.replace(/[^a-z0-9]/gi, '_').replace(/_+/g, '_').replace(/^_|_$/g, '');
+      if (!safeName) safeName = `entry_${i}`;
+      
+      r.images = [];
+      const folderPath = `images/${safeName}/`;
+      
+      const imgFiles = [];
+      zip.folder(folderPath).forEach((relativePath, zipObj) => {
+        if (!zipObj.dir) imgFiles.push(zipObj);
+      });
+      
+      imgFiles.sort((a, b) => a.name.localeCompare(b.name));
+      
+      for (let imgFile of imgFiles) {
+        const base64Data = await imgFile.async("base64");
+        const ext = imgFile.name.split('.').pop().toLowerCase();
+        const mimeType = (ext === 'jpg' || ext === 'jpeg') ? 'image/jpeg' : `image/${ext}`;
+        r.images.push(`data:${mimeType};base64,${base64Data}`);
+      }
+      
+      newRows.push(r);
+    }
+    
+    rows = newRows;
+    save();
+    renderTable();
+    updateStats();
+    alert("Successfully imported " + rows.length + " entries directly from ZIP!");
+  } catch(e) {
+    console.error(e);
+    alert("Error reading ZIP: " + e.message);
+  }
+  input.value = '';
 }
 
 async function exportCSV() {
