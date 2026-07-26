@@ -1609,7 +1609,6 @@ const ETYPE_CLASS = {
 let rows = [];
 let inpImages = [];
 let showStarredOnly = false;
-let lastAutoSaveCount = 0;
 
 const DB_NAME = 'gre_errors_db';
 const STORE_NAME = 'store';
@@ -1646,10 +1645,6 @@ async function idbSet(key, val) {
 function save() { 
   try { 
     idbSet('gre_errors_v3', JSON.stringify(rows)); 
-    if (rows.length > 0 && rows.length % 10 === 0 && rows.length > lastAutoSaveCount) {
-      lastAutoSaveCount = rows.length;
-      exportCSV();
-    }
   } catch(e) {} 
 }
 
@@ -1664,10 +1659,8 @@ async function load() {
       }
     }
     if(d) rows = JSON.parse(d); 
-    lastAutoSaveCount = rows.length - (rows.length % 10);
   } catch(e) { 
     rows=[]; 
-    lastAutoSaveCount = 0;
   } 
 }
 
