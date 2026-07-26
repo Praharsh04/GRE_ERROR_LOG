@@ -1334,6 +1334,8 @@
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
     </div>
   </div>
+  <input type="file" id="import-json-file" accept=".json" style="display:none;" onchange="importJSON(this)">
+  <label for="import-json-file" class="btn btn-primary" style="margin-left:4px; margin-bottom: 0;">↑ Import JSON</label>
   <button class="btn btn-primary" onclick="exportCSV()" style="margin-left:4px;">↓ Export CSV</button>
 </header>
 
@@ -1606,9 +1608,67 @@ const ETYPE_CLASS = {
 let rows = [];
 let inpImages = [];
 let showStarredOnly = false;
+let lastAutoSaveCount = 0;
 
-function save() { try { localStorage.setItem('gre_errors_v3', JSON.stringify(rows)); } catch(e) {} }
-function load() { try { const d = localStorage.getItem('gre_errors_v3'); if(d) rows = JSON.parse(d); } catch(e) { rows=[]; } }
+const DB_NAME = 'gre_errors_db';
+const STORE_NAME = 'store';
+
+function idbOpen() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(DB_NAME, 1);
+    request.onupgradeneeded = e => e.target.result.createObjectStore(STORE_NAME);
+    request.onsuccess = e => resolve(e.target.result);
+    request.onerror = e => reject(e.target.error);
+  });
+}
+
+async function idbGet(key) {
+  const db = await idbOpen();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, 'readonly');
+    const request = tx.objectStore(STORE_NAME).get(key);
+    request.onsuccess = e => resolve(e.target.result);
+    request.onerror = e => reject(e.target.error);
+  });
+}
+
+async function idbSet(key, val) {
+  const db = await idbOpen();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, 'readwrite');
+    const request = tx.objectStore(STORE_NAME).put(val, key);
+    request.onsuccess = () => resolve();
+    request.onerror = e => reject(e.target.error);
+  });
+}
+
+function save() { 
+  try { 
+    idbSet('gre_errors_v3', JSON.stringify(rows)); 
+    if (rows.length > 0 && rows.length % 10 === 0 && rows.length > lastAutoSaveCount) {
+      lastAutoSaveCount = rows.length;
+      exportCSV();
+    }
+  } catch(e) {} 
+}
+
+async function load() { 
+  try { 
+    let d = await idbGet('gre_errors_v3');
+    if (!d) {
+      // Migrate from old localStorage if exists
+      d = localStorage.getItem('gre_errors_v3');
+      if (d) {
+        idbSet('gre_errors_v3', d);
+      }
+    }
+    if(d) rows = JSON.parse(d); 
+    lastAutoSaveCount = rows.length - (rows.length % 10);
+  } catch(e) { 
+    rows=[]; 
+    lastAutoSaveCount = 0;
+  } 
+}
 
 function getFiltered() {
   const ft = document.getElementById('filter-topic').value;
@@ -2163,6 +2223,29 @@ function resetFilters() {
   renderTable();
 }
 
+function importJSON(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (Array.isArray(data)) {
+        rows = data;
+        save();
+        renderTable();
+        alert('Successfully imported ' + rows.length + ' entries!');
+      } else {
+        alert('Invalid JSON format. Expected an array of entries.');
+      }
+    } catch(err) {
+      alert('Error reading JSON: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+  input.value = ''; // Reset input so the same file can be imported again if needed
+}
+
 async function exportCSV() {
   const zip = new JSZip();
   const dateStr = new Date().toISOString().slice(0,10);
@@ -2235,8 +2318,12 @@ function updateThemeToggle(theme) {
 document.getElementById('theme-toggle').onclick = toggleTheme;
 
 initTheme();
-load(); buildTopicFilter(); buildInpTopics(); renderTable();
-document.getElementById('inp-topic').focus();
+load().then(() => {
+  buildTopicFilter(); 
+  buildInpTopics(); 
+  renderTable();
+  document.getElementById('inp-topic').focus();
+});
 
 document.querySelector('.input-row-fields').addEventListener('keydown', function(e) {
   if (e.key === 'Enter') {
