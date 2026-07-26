@@ -6,6 +6,7 @@
 <title>GRE Quant · Error Log</title>
 <link rel="icon" type="image/png" href="logo.png">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
   :root {
     --bg:          #faf8f5;
@@ -2162,15 +2163,56 @@ function resetFilters() {
   renderTable();
 }
 
-function exportCSV() {
+async function exportCSV() {
+  const zip = new JSZip();
+  const dateStr = new Date().toISOString().slice(0,10);
+  
+  // Create CSV
   const h = ['Starred','#','Topic','Subtopic','Q#','Error Type','What I Did','What I Should Have Done','Root Cause','Review'];
   const lines = [h.join(','), ...rows.map((r,i) =>
     [r.starred?'Y':'N',i+1,...['topic','subtopic','qnum','etype','did','should','root','review'].map(f=>`"${(r[f]||'').replace(/"/g,'""')}"`)]
     .join(',')
   )];
+  zip.file(`gre_errors_${dateStr}.csv`, lines.join('\n'));
+
+  // Create Images Folder
+  const imgFolder = zip.folder("images");
+  
+  rows.forEach((r, i) => {
+    const imgs = getRowImages(r);
+    if (imgs && imgs.length > 0) {
+      // Build safe folder name based on topic, subtopic, qnum
+      const topicStr = (r.topic || 'UnknownTopic').trim();
+      const subtopicStr = (r.subtopic || 'UnknownSubtopic').trim();
+      const qnumStr = (r.qnum || `row${i+1}`).trim();
+      
+      let rawName = `${topicStr}_${subtopicStr}_${qnumStr}`;
+      // Sanitize folder name
+      let safeName = rawName.replace(/[^a-z0-9]/gi, '_').replace(/_+/g, '_').replace(/^_|_$/g, '');
+      if (!safeName) safeName = `entry_${i+1}`;
+      
+      const entryFolder = imgFolder.folder(safeName);
+      
+      imgs.forEach((imgDataUrl, imgIdx) => {
+        const parts = imgDataUrl.split(',');
+        if (parts.length === 2) {
+          const base64Data = parts[1];
+          let ext = 'png';
+          const mimeMatch = parts[0].match(/data:image\/([a-zA-Z0-9]+);/);
+          if (mimeMatch && mimeMatch[1]) {
+             ext = mimeMatch[1] === 'jpeg' ? 'jpg' : mimeMatch[1];
+          }
+          entryFolder.file(`image_${imgIdx + 1}.${ext}`, base64Data, {base64: true});
+        }
+      });
+    }
+  });
+
+  // Generate zip file and download
+  const content = await zip.generateAsync({type:"blob"});
   const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([lines.join('\n')],{type:'text/csv'}));
-  a.download = `gre_errors_${new Date().toISOString().slice(0,10)}.csv`;
+  a.href = URL.createObjectURL(content);
+  a.download = `gre_errors_${dateStr}.zip`;
   a.click();
 }
 
