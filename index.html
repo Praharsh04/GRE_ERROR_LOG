@@ -2237,6 +2237,13 @@ document.getElementById('theme-toggle').onclick = toggleTheme;
 initTheme();
 load(); buildTopicFilter(); buildInpTopics(); renderTable();
 document.getElementById('inp-topic').focus();
+
+document.querySelector('.input-row-fields').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    addRow();
+  }
+});
 </script>
 </body>
 </html>
