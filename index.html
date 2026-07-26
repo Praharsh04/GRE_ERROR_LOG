@@ -1389,7 +1389,7 @@
         <th>Error Type</th>
         <th>What I Did</th>
         <th>What I Should've Done</th>
-        <th>Root Cause</th>
+        <th>Strategy</th>
         <th>Review</th>
         <th>Image</th>
         <th></th>
@@ -1439,7 +1439,7 @@
       <input class="inp-field" type="text" id="inp-should" placeholder="What I should've done…" tabindex="6">
     </div>
     <div class="inp-cell c-root-inp">
-      <input class="inp-field" type="text" id="inp-root" placeholder="Root cause…" tabindex="7">
+      <input class="inp-field" type="text" id="inp-root" placeholder="Strategy…" tabindex="7">
     </div>
     <div class="inp-cell c-rev-inp">
       <select class="inp-select" id="inp-review" tabindex="8">
@@ -1665,7 +1665,7 @@ function renderTable() {
       </td>
       <td data-label="What I Did"><textarea class="cell-text cell-text-popup" rows="1" onclick="openTextPopup(${gi},'did')" readonly>${escH(row.did)}</textarea></td>
       <td data-label="What I Should've Done"><textarea class="cell-text cell-text-popup" rows="1" onclick="openTextPopup(${gi},'should')" readonly>${escH(row.should)}</textarea></td>
-      <td data-label="Root Cause"><textarea class="cell-text" rows="1" onblur="updateField(${gi},'root',this.value)">${escH(row.root)}</textarea></td>
+      <td data-label="Strategy"><textarea class="cell-text" rows="1" onblur="updateField(${gi},'root',this.value)">${escH(row.root)}</textarea></td>
       <td data-label="Review">
         <div class="review-pill ${row.review==='Reviewed'?'reviewed':'not-reviewed'}" onclick="toggleReview(${gi})">
           ${row.review==='Reviewed'?'✓ Done':'✗ Pending'}
@@ -2168,7 +2168,7 @@ async function exportCSV() {
   const dateStr = new Date().toISOString().slice(0,10);
   
   // Create CSV
-  const h = ['Starred','#','Topic','Subtopic','Q#','Error Type','What I Did','What I Should Have Done','Root Cause','Review'];
+  const h = ['Starred','#','Topic','Subtopic','Q#','Error Type','What I Did','What I Should Have Done','Strategy','Review'];
   const lines = [h.join(','), ...rows.map((r,i) =>
     [r.starred?'Y':'N',i+1,...['topic','subtopic','qnum','etype','did','should','root','review'].map(f=>`"${(r[f]||'').replace(/"/g,'""')}"`)]
     .join(',')
